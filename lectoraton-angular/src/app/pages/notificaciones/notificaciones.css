@@ -1,0 +1,26 @@
+.notificaciones-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.2rem 1rem 2rem;
+  color: #5c4033;
+}
+
+.nota {
+  margin-top: 0;
+}
+
+.nota.error {
+  color: #6b2c2c;
+}
+
+.lista {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.item {
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border: 1px solid rgba(139, 115, 85, 0.22);
+  border-radius: 12px;
+  padding: 0.75rem;
+}

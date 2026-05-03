@@ -1,0 +1,357 @@
+.bibliotecas-page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+  background: #f5eedd;
+}
+
+.side-decoration {
+  flex-shrink: 0;
+  padding-top: 5rem;
+  opacity: 0.92;
+}
+
+.side-decoration-icon {
+  display: block;
+  filter: drop-shadow(2px 3px 4px rgba(92, 64, 51, 0.2));
+}
+
+.bibliotecas-panel {
+  flex: 1;
+  min-width: 0;
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border-radius: 20px;
+  padding: 1.75rem 1.5rem 2.25rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 12px rgba(92, 64, 51, 0.08),
+    0 8px 28px rgba(92, 64, 51, 0.12);
+  border: 1px solid rgba(139, 115, 85, 0.22);
+}
+
+.titulo-estanteria {
+  margin: 0 0 1.75rem;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2.1rem, 5vw, 2.75rem);
+  font-weight: 700;
+  color: #5c4033;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.acciones-panel {
+  display: flex;
+  justify-content: center;
+  margin: -0.25rem 0 1.35rem;
+}
+
+.btn-crear {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  background: #ad7b59;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(173, 123, 89, 0.35);
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+}
+
+.btn-crear:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 3px 10px rgba(173, 123, 89, 0.4);
+}
+
+.estanterias {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.estante-fila {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.libros-en-estante {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(0.65rem, 3vw, 1.75rem);
+  padding: 0 0.35rem;
+}
+
+.columna-libro {
+  flex: 1 1 0;
+  max-width: 140px;
+  min-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition: transform 0.14s ease;
+}
+
+.columna-libro:hover {
+  transform: translateY(-2px);
+}
+
+.nombre-biblioteca {
+  font-family: 'Libre Baskerville', 'Times New Roman', serif;
+  font-size: clamp(0.72rem, 2.1vw, 0.88rem);
+  font-weight: 700;
+  color: #5c4033;
+  text-align: center;
+  line-height: 1.25;
+  min-height: 2.5em;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  text-wrap: balance;
+}
+
+.portada-wrap {
+  width: 100%;
+  max-width: 118px;
+  margin-inline: auto;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #2d2620;
+  box-shadow:
+    0 2px 6px rgba(47, 32, 22, 0.35),
+    0 0 0 1px rgba(92, 64, 51, 0.12);
+}
+
+.portada-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.portada-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #d4b896 0%, #b8956f 48%, #9a7652 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+}
+
+.placeholder-text {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.88);
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(47, 32, 22, 0.35);
+}
+
+.acciones-biblioteca {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.accion-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #d7bea0;
+  color: #5c4033;
+  cursor: pointer;
+}
+
+.accion-btn.danger {
+  background: #d6a4a1;
+  color: #5c2424;
+}
+
+.tabla-madera {
+  margin-top: 0.15rem;
+}
+
+.tabla-superficie {
+  height: 16px;
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    #b07a52 0%,
+    #8b5a3c 42%,
+    #6b4423 100%
+  );
+  box-shadow:
+    0 6px 10px rgba(47, 32, 22, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 3px rgba(47, 32, 22, 0.2);
+}
+
+.tabla-soportes {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10% 0;
+  margin-top: 0;
+}
+
+.soporte {
+  width: 22px;
+  height: 20px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(90deg, #4d341f 0%, #6b4423 45%, #5c3d26 100%);
+  box-shadow: 0 3px 4px rgba(47, 32, 22, 0.25);
+}
+
+.state-msg {
+  color: #5c4033;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.state-msg.error {
+  color: #6b2c2c;
+}
+
+.link-back {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #ad7b59;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-back:hover {
+  color: #8b5f45;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 33, 23, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: min(460px, 100%);
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(47, 32, 22, 0.28);
+  padding: 1.1rem 1rem 1rem;
+}
+
+.modal-card h2 {
+  margin: 0 0 0.35rem;
+  color: #5c4033;
+}
+
+.modal-card p {
+  margin: 0 0 0.75rem;
+  color: #6f4f3a;
+}
+
+.modal-card label {
+  display: block;
+  color: #5c4033;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.modal-card input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  background: #e3c7a1;
+  color: #5c4033;
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+}
+
+.modal-error {
+  margin: 0.65rem 0 0;
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  background: rgba(107, 44, 44, 0.12);
+  color: #5c2424;
+}
+
+.modal-actions {
+  margin-top: 0.9rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.btn-modal {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-modal.secundario {
+  background: #d7bea0;
+  color: #5c4033;
+}
+
+.btn-modal.principal {
+  background: #ad7b59;
+  color: #fff;
+}
+
+.btn-modal.danger {
+  background: #b45a54;
+  color: #fff;
+}
+
+.btn-modal:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .bibliotecas-page {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .side-decoration {
+    padding-top: 0;
+    order: 2;
+  }
+
+  .libros-en-estante {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .columna-libro {
+    flex: 0 0 auto;
+    width: 92px;
+    min-width: 92px;
+  }
+
+  .portada-wrap {
+    max-width: 100%;
+  }
+}

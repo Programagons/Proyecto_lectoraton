@@ -1,0 +1,77 @@
+<div class="agregar-libro-page">
+  <p class="back"><a routerLink="/inicio">← Volver</a></p>
+  <h1>Agregar libro</h1>
+  <p class="sub">Los cambios quedarán visibles en Explorar y en el resto de la app.</p>
+
+  @if (loadingMeta()) {
+    <p class="state-msg">Cargando datos…</p>
+  } @else {
+    @if (error()) {
+      <p class="state-msg error" role="alert">{{ error() }}</p>
+    }
+
+    <form class="form-libro" (ngSubmit)="enviar()">
+      <label>
+        ISBN (13 dígitos)
+        <input type="text" [(ngModel)]="isbn" name="isbn" maxlength="17" required autocomplete="off" />
+      </label>
+      <label>
+        Título
+        <input type="text" [(ngModel)]="titulo" name="titulo" maxlength="200" required />
+      </label>
+      <label>
+        Saga (opcional)
+        <input type="text" [(ngModel)]="sagaNombre" name="sagaNombre" maxlength="150" />
+      </label>
+      <label>
+        Número en saga
+        <input type="number" [(ngModel)]="numeroSaga" name="numeroSaga" min="1" />
+      </label>
+      <label>
+        Sinopsis
+        <textarea [(ngModel)]="sinopsis" name="sinopsis" rows="4"></textarea>
+      </label>
+      <label>
+        Autor
+        <select [(ngModel)]="autorId" name="autorId" required>
+          <option [ngValue]="null">— Elige autor —</option>
+          @for (a of autores; track a.id) {
+            <option [ngValue]="a.id">{{ a.nombre_completo }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Páginas
+        <input type="number" [(ngModel)]="numPaginas" name="numPaginas" min="1" />
+      </label>
+      <label>
+        Fecha publicación
+        <input type="date" [(ngModel)]="fechaPublicacion" name="fechaPublicacion" />
+      </label>
+      <label>
+        Géneros (Ctrl+clic varios)
+        <select [(ngModel)]="generoIds" name="generoIds" multiple size="6">
+          @for (g of generos; track g.id) {
+            <option [ngValue]="g.id">{{ g.nombre }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Tropos (Ctrl+clic varios)
+        <select [(ngModel)]="tropoIds" name="tropoIdsSel" multiple size="6">
+          @for (t of tropos; track t.id) {
+            <option [ngValue]="t.id">{{ t.nombre }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Portada (imagen, opcional)
+        <input type="file" accept="image/*" (change)="onPortadaChange($event)" />
+      </label>
+
+      <button type="submit" class="btn-submit" [disabled]="enviando()">
+        {{ enviando() ? 'Guardando…' : 'Guardar libro' }}
+      </button>
+    </form>
+  }
+</div>

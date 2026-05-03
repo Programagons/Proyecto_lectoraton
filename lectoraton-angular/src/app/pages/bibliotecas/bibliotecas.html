@@ -1,0 +1,134 @@
+<div class="bibliotecas-page">
+  <aside class="side-decoration" aria-hidden="true">
+    <span class="side-decoration-icon" title="">
+      <svg viewBox="0 0 64 80" width="48" height="60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="8" width="12" height="52" rx="1" fill="#c17a4a" />
+        <rect x="18" y="14" width="12" height="46" rx="1" fill="#8b5a3c" />
+        <rect x="32" y="6" width="12" height="54" rx="1" fill="#ad7b59" />
+        <rect x="46" y="18" width="12" height="42" rx="1" fill="#6b4423" />
+        <rect x="2" y="62" width="58" height="8" rx="2" fill="#5c3d26" />
+      </svg>
+    </span>
+  </aside>
+
+  <div class="bibliotecas-panel">
+    @if (loading()) {
+      <p class="state-msg">Cargando…</p>
+    } @else if (error()) {
+      <p class="state-msg error" role="alert">{{ error() }}</p>
+      <a routerLink="/" class="link-back">Volver al inicio de sesión</a>
+    } @else if (items().length === 0) {
+      <p class="state-msg">Aún no tienes bibliotecas.</p>
+      <a routerLink="/inicio" class="link-back">Ir al inicio</a>
+    } @else {
+      <h1 class="titulo-estanteria">Bibliotecas</h1>
+      <div class="acciones-panel">
+        <button type="button" class="btn-crear" (click)="abrirModalCrear()">+ Nueva biblioteca</button>
+      </div>
+
+      <div class="estanterias">
+        @for (fila of filasEstante(); track $index) {
+          <div class="estante-fila">
+            <div class="libros-en-estante">
+              @for (b of fila; track b.id) {
+                <a class="columna-libro" [routerLink]="['/bibliotecas', b.id]" [attr.aria-label]="'Abrir biblioteca ' + b.nombre">
+                  <span class="nombre-biblioteca">{{ b.nombre }}</span>
+                  <div class="portada-wrap">
+                    @if (b.ultimaPortada) {
+                      <img
+                        class="portada-img"
+                        [src]="b.ultimaPortada"
+                        alt=""
+                        loading="lazy"
+                      />
+                    } @else {
+                      <div class="portada-placeholder">
+                        <span class="placeholder-text">Sin libros</span>
+                      </div>
+                    }
+                  </div>
+                  <div class="acciones-biblioteca">
+                    <button type="button" class="accion-btn" (click)="abrirModalRenombrar(b, $event)">Editar</button>
+                    @if (!esBibliotecaFija(b.nombre)) {
+                      <button type="button" class="accion-btn danger" (click)="abrirModalEliminar(b, $event)">Eliminar</button>
+                    }
+                  </div>
+                </a>
+              }
+            </div>
+            <div class="tabla-madera">
+              <div class="tabla-superficie"></div>
+              <div class="tabla-soportes">
+                <span class="soporte"></span>
+                <span class="soporte"></span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (showCreateModal()) {
+    <div class="modal-backdrop" (click)="cerrarModalCrear()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h2>Crear biblioteca</h2>
+        <p>Escribe un nombre rápido para tu nueva biblioteca.</p>
+        <label for="nombreBiblioteca">Nombre</label>
+        <input
+          id="nombreBiblioteca"
+          type="text"
+          [(ngModel)]="nombreNuevaBiblioteca"
+          maxlength="100"
+          placeholder="Ej. Pendientes, Favoritos, Terminados..."
+        />
+        @if (createError()) {
+          <p class="modal-error" role="alert">{{ createError() }}</p>
+        }
+        <div class="modal-actions">
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalCrear()" [disabled]="creating()">Cancelar</button>
+          <button type="button" class="btn-modal principal" (click)="crearBiblioteca()" [disabled]="creating()">
+            {{ creating() ? 'Creando…' : 'Crear' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showRenameModal()) {
+    <div class="modal-backdrop" (click)="cerrarModalRenombrar()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h2>Renombrar biblioteca</h2>
+        <label for="nombreEditarBiblioteca">Nuevo nombre</label>
+        <input id="nombreEditarBiblioteca" type="text" [(ngModel)]="nombreEditarBiblioteca" maxlength="100" />
+        @if (renameError()) {
+          <p class="modal-error" role="alert">{{ renameError() }}</p>
+        }
+        <div class="modal-actions">
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalRenombrar()" [disabled]="renaming()">Cancelar</button>
+          <button type="button" class="btn-modal principal" (click)="renombrarBiblioteca()" [disabled]="renaming()">
+            {{ renaming() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showDeleteModal()) {
+    <div class="modal-backdrop" (click)="cerrarModalEliminar()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h2>Eliminar biblioteca</h2>
+        <p>Se eliminará <strong>{{ bibliotecaSeleccionada?.nombre }}</strong>. Esta acción no se puede deshacer.</p>
+        @if (deleteError()) {
+          <p class="modal-error" role="alert">{{ deleteError() }}</p>
+        }
+        <div class="modal-actions">
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalEliminar()" [disabled]="deleting()">Cancelar</button>
+          <button type="button" class="btn-modal danger" (click)="eliminarBiblioteca()" [disabled]="deleting()">
+            {{ deleting() ? 'Eliminando…' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

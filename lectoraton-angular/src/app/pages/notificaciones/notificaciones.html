@@ -1,0 +1,18 @@
+<section class="notificaciones-page">
+  <h1>Notificaciones</h1>
+  @if (loading()) {
+    <p class="nota">Cargando notificaciones…</p>
+  } @else if (error()) {
+    <p class="nota error">{{ error() }}</p>
+  } @else {
+    <div class="lista">
+      @for (item of items(); track $index) {
+        <article class="item">
+          <p>{{ item.mensaje }}</p>
+        </article>
+      } @empty {
+        <p class="nota">No tienes notificaciones por ahora.</p>
+      }
+    </div>
+  }
+</section>

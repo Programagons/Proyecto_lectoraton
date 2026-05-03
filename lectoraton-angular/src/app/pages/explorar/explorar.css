@@ -1,0 +1,251 @@
+.explorar-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.3rem 1rem 3rem;
+  background: #f5eedd;
+}
+
+.explorar-carruseles {
+  margin-bottom: 1.35rem;
+}
+
+.carrusel-estado {
+  text-align: center;
+  color: #6f4f3a;
+  font-size: 0.92rem;
+  margin: 0 0 1rem;
+}
+
+.bloque-carrusel {
+  margin-bottom: 1.5rem;
+}
+
+.bloque-carrusel--segundo {
+  padding-top: 0.25rem;
+  border-top: 1px solid rgba(139, 115, 85, 0.2);
+}
+
+.titulo-carrusel {
+  margin: 0 0 0.15rem;
+  font-family: 'Dancing Script', cursive;
+  font-size: 2rem;
+  color: #5c4033;
+  text-align: center;
+}
+
+.sub-carrusel {
+  margin: 0 0 0.65rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #8b5f45;
+}
+
+.carousel-lectoraton {
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.25);
+  padding-bottom: 0.35rem;
+}
+
+.carousel-lectoraton .carousel-inner {
+  padding: 0.35rem 0 1.5rem;
+}
+
+/** Miniaturas fijas: evita que una sola portada devore el ancho de pantalla */
+.carrusel-slide-fila {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.65rem 0.85rem;
+  padding: 0.25rem 2.5rem;
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.carousel-lectoraton .carousel-control-prev,
+.carousel-lectoraton .carousel-control-next {
+  width: 2.25rem;
+  opacity: 0.85;
+}
+
+.carousel-lectoraton .carousel-control-prev-icon,
+.carousel-lectoraton .carousel-control-next-icon {
+  filter: invert(28%) sepia(18%) saturate(900%) hue-rotate(330deg);
+  width: 2rem;
+  height: 2rem;
+}
+
+.carousel-lectoraton .carousel-indicators [type='button'] {
+  background-color: #ad7b59;
+}
+
+.carousel-lectoraton .carousel-indicators .active {
+  background-color: #5c4033;
+}
+
+.carrusel-libro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  color: #5c4033;
+  flex: 0 0 auto;
+  width: clamp(100px, 22vw, 128px);
+  max-width: 128px;
+}
+
+.carrusel-portada {
+  width: 100%;
+  height: auto;
+  max-height: 192px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(60, 42, 28, 0.18);
+}
+
+.carrusel-titulo {
+  margin-top: 0.4rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carrusel-autor {
+  font-size: 0.78rem;
+  color: #8b5f45;
+  margin-top: 0.12rem;
+}
+
+.explorar-panel {
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(139, 115, 85, 0.22);
+  padding: 1rem;
+}
+
+h1 {
+  margin: 0 0 0.8rem;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  color: #5c4033;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+}
+
+.filtros input,
+.filtros select {
+  border: none;
+  border-radius: 999px;
+  background: #e3c7a1;
+  color: #5c4033;
+  padding: 0.55rem 0.85rem;
+}
+
+.acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn.buscar {
+  background: #ad7b59;
+  color: #fff;
+}
+
+.btn.limpiar {
+  background: #d7bea0;
+  color: #5c4033;
+}
+
+.grid-libros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.load-more-wrap {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.libro-card {
+  text-decoration: none;
+  color: #5c4033;
+}
+
+.libro-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.libro-card h2 {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+}
+
+.libro-card p {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+}
+
+.saga {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: #8b5f45;
+}
+
+.state-msg {
+  text-align: center;
+  color: #5c4033;
+}
+
+.state-msg.error {
+  color: #6b2c2c;
+}
+
+@media (max-width: 700px) {
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .carrusel-slide-fila {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    gap: 0.5rem 0.65rem;
+  }
+
+  .carrusel-libro-card {
+    width: clamp(92px, 42vw, 118px);
+    max-width: 118px;
+  }
+
+  .carrusel-portada {
+    max-height: 168px;
+  }
+}

@@ -1,0 +1,52 @@
+<header class="app-header">
+  <a [routerLink]="auth.isLoggedIn() ? '/inicio' : '/'" class="logo" aria-label="Lectoratón - Inicio">
+    <img src="https://i.imgur.com/CS192xF.png" alt="Lectoratón" class="logo-img" />
+  </a>
+  <nav class="nav-links" aria-label="Principal">
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/inicio" routerLinkActive="active">Inicio</a>
+    } @else {
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    }
+    <a routerLink="/bibliotecas" routerLinkActive="active">Bibliotecas</a>
+    <a routerLink="/explorar" routerLinkActive="active">Explorar</a>
+    <a routerLink="/recomendador" routerLinkActive="active">Recomendador</a>
+    <a routerLink="/comunidad" routerLinkActive="active">Comunidad</a>
+    @if (auth.canPublishBooks()) {
+      <a routerLink="/agregar-libro" routerLinkActive="active">Agregar libro</a>
+    }
+  </nav>
+  <div class="header-actions">
+    @if (auth.isLoggedIn()) {
+      <span class="user-pill">{{ auth.getUsername() }}</span>
+    }
+    <div class="menu-wrap" (click)="$event.stopPropagation()">
+      <button type="button" class="menu-btn" aria-label="Menú" (click)="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      @if (menuOpen()) {
+        <div class="bookmark-menu">
+          @if (auth.isLoggedIn()) {
+            <a routerLink="/perfil" (click)="closeMenu()">Perfil</a>
+            <a routerLink="/notificaciones" (click)="closeMenu()">Notificaciones</a>
+            <a routerLink="/preferencias" (click)="closeMenu()">Preferencias</a>
+            <a routerLink="/recomendador" (click)="closeMenu()">Recomendador</a>
+            @if (auth.canPublishBooks()) {
+              <a routerLink="/agregar-libro" (click)="closeMenu()">Agregar libro</a>
+            }
+            <button type="button" class="menu-link-btn" (click)="cerrarSesion()">Cerrar sesión</button>
+          } @else {
+            <a routerLink="/" (click)="closeMenu()">Iniciar sesión</a>
+            <a routerLink="/registro" (click)="closeMenu()">Registro</a>
+          }
+        </div>
+      }
+    </div>
+    <label class="toggle-wrap" aria-label="Alternar tema">
+      <input type="checkbox" class="toggle-input" [checked]="darkMode()" (change)="toggleDarkMode()" />
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+</header>

@@ -1,0 +1,167 @@
+<div class="explorar-page">
+  <section class="explorar-panel">
+    <h1>Explorar lecturas</h1>
+
+    <div class="explorar-carruseles">
+      @if (loadingCarruseles()) {
+        <p class="carrusel-estado">Cargando destacados…</p>
+      } @else {
+        @if (slidesNovedades().length > 0) {
+          <div class="bloque-carrusel">
+            <h2 class="titulo-carrusel">Novedades</h2>
+            <p class="sub-carrusel">Por fecha de publicación</p>
+            <div id="carouselNovedadesExplorar" class="carousel slide carousel-lectoraton">
+              @if (slidesNovedades().length > 1) {
+                <div class="carousel-indicators">
+                  @for (_ of slidesNovedades(); track iN; let iN = $index) {
+                    <button
+                      type="button"
+                      data-bs-target="#carouselNovedadesExplorar"
+                      [attr.data-bs-slide-to]="iN"
+                      [class.active]="iN === 0"
+                      [attr.aria-current]="iN === 0 ? 'true' : null"
+                      [attr.aria-label]="'Slide ' + (iN + 1)"
+                    ></button>
+                  }
+                </div>
+              }
+              <div class="carousel-inner">
+                @for (slide of slidesNovedades(); track idx; let idx = $index; let first = $first) {
+                  <div class="carousel-item" [class.active]="first">
+                    <div class="carrusel-slide-fila">
+                      @for (l of slide; track l.id) {
+                        <a class="carrusel-libro-card text-decoration-none" [routerLink]="['/libros', l.id]">
+                          <img [src]="l.portada || ''" [alt]="l.titulo" class="carrusel-portada" />
+                          <span class="carrusel-titulo">{{ l.titulo }}</span>
+                          <span class="carrusel-autor">{{ l.autorNombre || 'Autor' }}</span>
+                        </a>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+              @if (slidesNovedades().length > 1) {
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselNovedadesExplorar" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselNovedadesExplorar" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        @if (slidesMasLeidos().length > 0) {
+          <div class="bloque-carrusel bloque-carrusel--segundo">
+            <h2 class="titulo-carrusel">Más leídos</h2>
+            <p class="sub-carrusel">Según calificaciones en la comunidad</p>
+            <div id="carouselMasLeidosExplorar" class="carousel slide carousel-lectoraton">
+              @if (slidesMasLeidos().length > 1) {
+                <div class="carousel-indicators">
+                  @for (_ of slidesMasLeidos(); track iM; let iM = $index) {
+                    <button
+                      type="button"
+                      data-bs-target="#carouselMasLeidosExplorar"
+                      [attr.data-bs-slide-to]="iM"
+                      [class.active]="iM === 0"
+                      [attr.aria-current]="iM === 0 ? 'true' : null"
+                      [attr.aria-label]="'Slide ' + (iM + 1)"
+                    ></button>
+                  }
+                </div>
+              }
+              <div class="carousel-inner">
+                @for (slide of slidesMasLeidos(); track idx; let idx = $index; let first = $first) {
+                  <div class="carousel-item" [class.active]="first">
+                    <div class="carrusel-slide-fila">
+                      @for (l of slide; track l.id) {
+                        <a class="carrusel-libro-card text-decoration-none" [routerLink]="['/libros', l.id]">
+                          <img [src]="l.portada || ''" [alt]="l.titulo" class="carrusel-portada" />
+                          <span class="carrusel-titulo">{{ l.titulo }}</span>
+                          <span class="carrusel-autor">{{ l.autorNombre || 'Autor' }}</span>
+                        </a>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+              @if (slidesMasLeidos().length > 1) {
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselMasLeidosExplorar" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselMasLeidosExplorar" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="filtros">
+      <input type="text" [(ngModel)]="titulo" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por título..." />
+      <input type="text" [(ngModel)]="autor" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por autor..." />
+      <input type="text" [(ngModel)]="saga" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por saga..." />
+
+      <select [(ngModel)]="generoId" (change)="buscar(true)">
+        <option [ngValue]="null">Todos los géneros</option>
+        @for (g of generos(); track g.id) {
+          <option [ngValue]="g.id">{{ g.nombre }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="tropoId" (change)="buscar(true)">
+        <option [ngValue]="null">Todos los tropos</option>
+        @for (t of tropos(); track t.id) {
+          <option [ngValue]="t.id">{{ t.nombre }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="orden" (change)="buscar(true)">
+        <option value="titulo,asc">Titulo A-Z</option>
+        <option value="titulo,desc">Titulo Z-A</option>
+        <option value="fechaPublicacion,desc">Mas nuevos</option>
+        <option value="fechaPublicacion,asc">Mas antiguos</option>
+      </select>
+
+      <div class="acciones">
+        <button type="button" class="btn buscar" (click)="buscar(true)">Buscar</button>
+        <button type="button" class="btn limpiar" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p class="state-msg">Cargando…</p>
+    } @else if (error()) {
+      <p class="state-msg error">{{ error() }}</p>
+    } @else if (libros().length === 0) {
+      <p class="state-msg">No hay resultados con esos filtros.</p>
+    } @else {
+      <div class="grid-libros">
+        @for (l of libros(); track l.id) {
+          <a class="libro-card" [routerLink]="['/libros', l.id]">
+            <img [src]="l.portada || ''" alt="" />
+            <h2>{{ l.titulo }}</h2>
+            <p>{{ l.autorNombre || 'Autor desconocido' }}</p>
+            @if (l.sagaNombre && l.numeroSaga) {
+              <span class="saga">{{ l.sagaNombre }} #{{ l.numeroSaga }}</span>
+            }
+          </a>
+        }
+      </div>
+      @if (quedanMasResultados()) {
+        <div class="load-more-wrap">
+          <button type="button" class="btn buscar" [disabled]="loadingMore()" (click)="buscar(false)">
+            {{ loadingMore() ? 'Cargando…' : 'Cargar más' }}
+          </button>
+        </div>
+      }
+    }
+  </section>
+</div>

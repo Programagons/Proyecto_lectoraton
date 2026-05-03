@@ -1,0 +1,71 @@
+<section class="perfil-page">
+  <h1>Mi perfil</h1>
+
+  @if (loading()) {
+    <p class="state-msg">Cargando perfil…</p>
+  } @else if (error()) {
+    <p class="state-msg error">{{ error() }}</p>
+  } @else if (perfil(); as p) {
+    <article class="perfil-card">
+      <div class="avatar">
+        @if (p.icono) {
+          <img [src]="p.icono" alt="Icono de perfil" />
+        } @else {
+          <span>{{ p.username.charAt(0).toUpperCase() }}</span>
+        }
+      </div>
+      <div class="datos">
+        <p><strong>Usuario:</strong> {{ p.username }}</p>
+        <p><strong>Nombre:</strong> {{ p.nombre }} {{ p.apellidos }}</p>
+        <p><strong>Email:</strong> {{ p.email }}</p>
+        @if (p.rolesEtiqueta?.length) {
+          <div class="roles-wrap">
+            <strong>Tipo de cuenta:</strong>
+            <ul class="roles-list">
+              @for (r of p.rolesEtiqueta; track r) {
+                <li class="rol-chip">{{ r }}</li>
+              }
+            </ul>
+          </div>
+        }
+        @if (!editandoBio()) {
+          <p><strong>Bio:</strong> {{ p.bio || 'Sin biografía todavía.' }}</p>
+          <button type="button" class="btn-editar" (click)="iniciarEdicionBio()">Editar bio</button>
+        } @else {
+          <label for="bioEdit"><strong>Bio:</strong></label>
+          <textarea id="bioEdit" [(ngModel)]="bioTemporal" maxlength="255"></textarea>
+          <div class="acciones-bio">
+            <button type="button" class="btn-editar" [disabled]="guardandoBio()" (click)="guardarBio()">
+              {{ guardandoBio() ? 'Guardando…' : 'Guardar' }}
+            </button>
+            <button type="button" class="btn-cancelar" [disabled]="guardandoBio()" (click)="cancelarEdicionBio()">Cancelar</button>
+          </div>
+        }
+        @if (bioError()) {
+          <p class="state-msg error">{{ bioError() }}</p>
+        }
+        @if (bioOk()) {
+          <p class="state-msg ok">{{ bioOk() }}</p>
+        }
+
+        @if (mostrarSolicitudEditor()) {
+          <div class="solicitud-editor-block">
+            <p class="solicitud-texto">
+              ¿Quieres añadir libros al catálogo? Solicita el rol <strong>Editor</strong> (por correo, como en Goodreads).
+            </p>
+            <button type="button" class="btn-solicitud" [disabled]="solicitudEnviando()" (click)="solicitarEditor()">
+              {{ solicitudEnviando() ? 'Enviando…' : 'Solicitar ser editor' }}
+            </button>
+            @if (solicitudMsg()) {
+              <p class="state-msg" [class.error]="solicitudError()" [class.ok]="!solicitudError()">{{ solicitudMsg() }}</p>
+            }
+            <p class="solicitud-nota">
+              Se enviará un correo a la administración con tus datos. Desde ese mensaje podrás activar la cuenta con un solo clic.
+              Cuando estés aprobado, <strong>cierra sesión y vuelve a entrar</strong> para ver «Agregar libro» en el menú.
+            </p>
+          </div>
+        }
+      </div>
+    </article>
+  }
+</section>

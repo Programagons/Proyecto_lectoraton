@@ -1,0 +1,116 @@
+<section class="inicio-page">
+  <header class="inicio-top">
+    <div class="inicio-titulos">
+      <h1>Inicio</h1>
+      <p class="subtitulo">Actividad de las personas que sigues</p>
+    </div>
+
+    <label class="toggle-propias">
+      <input type="checkbox" name="incluirPropias" [(ngModel)]="incluirPropias" (change)="onCambiarFiltroPropias()" />
+      <span class="toggle-propias-track" aria-hidden="true"></span>
+      <span class="toggle-propias-text">Incluir mi actividad</span>
+    </label>
+  </header>
+
+  <div class="inicio-layout">
+    <aside class="sidebar-ultima" aria-label="Tu última lectura actualizada">
+      <p class="sidebar-heading">Última actualización</p>
+
+      @if (cargandoUltimo()) {
+        <p class="sidebar-placeholder">Cargando…</p>
+      } @else if (ultimoProgreso(); as u) {
+        <a [routerLink]="['/libros', u.libroId]" fragment="bloque-progreso" class="sidebar-cover-wrap">
+          <img class="sidebar-cover" [src]="u.portada || ''" [alt]="'Portada de ' + u.titulo" />
+        </a>
+        <div class="barra sidebar-bar" role="progressbar" [attr.aria-valuenow]="clampPct(u.porcentaje)" aria-valuemin="0" aria-valuemax="100">
+          <div class="relleno" [style.width.%]="clampPct(u.porcentaje)"></div>
+        </div>
+        <p class="sidebar-stats">{{ u.paginaActual }} / {{ u.paginasTotales ?? '?' }} págs · {{ u.porcentaje.toFixed(1) }} %</p>
+        <a [routerLink]="['/libros', u.libroId]" fragment="bloque-progreso" class="btn-actualizar-progreso">Actualizar progreso</a>
+      } @else {
+        <p class="sidebar-placeholder">Cuando guardes el progreso de un libro, aparecerá aquí para retomarlo rápido.</p>
+        <a routerLink="/explorar" class="btn-actualizar-progreso btn-actualizar-progreso--ghost">Explorar libros</a>
+      }
+    </aside>
+
+    <div class="feed-column">
+      @if (loading()) {
+        <p class="nota">Cargando actividad…</p>
+      } @else if (error()) {
+        <p class="nota error">{{ error() }}</p>
+      } @else {
+        <div class="lista-feed">
+          @for (item of items(); track item.id; let idx = $index) {
+            <article class="feed-book" [class.feed-book--mirror]="idx % 2 === 1">
+              <div class="feed-book-spine" aria-hidden="true"></div>
+              <div class="feed-book-pages">
+                <div class="feed-book-main">
+                  <div class="feed-head">
+                    <div class="avatar">
+                      @if (item.actorIcono) {
+                        <img [src]="item.actorIcono" alt="" />
+                      } @else {
+                        <span>{{ item.actorUsername.charAt(0).toUpperCase() }}</span>
+                      }
+                    </div>
+                    <div class="feed-head-text">
+                      <p class="actor-line">
+                        <strong>{{ item.actorNombreCompleto }}</strong>
+                        <span class="username">&#64;{{ item.actorUsername }}</span>
+                      </p>
+                      <p class="meta-line">
+                        <span
+                          class="badge"
+                          [class.b-resena]="item.tipo === 'RESENA'"
+                          [class.b-progreso]="item.tipo === 'PROGRESO'"
+                          [class.b-comentario]="item.tipo === 'COMENTARIO'"
+                        >
+                          {{ etiquetaTipo(item.tipo) }}
+                        </span>
+                        <span class="fecha">{{ item.fechaCreacion | date: 'short' }}</span>
+                      </p>
+                    </div>
+                  </div>
+                  @if (item.texto) {
+                    <p class="texto-feed">{{ item.texto }}</p>
+                  }
+                  @if (item.libroId) {
+                    <div class="feed-links">
+                      <a [routerLink]="['/libros', item.libroId]" class="link-libro">Ver libro</a>
+                      @if (item.libroTitulo) {
+                        <span class="titulo-libro-chip">{{ item.libroTitulo }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                @if (item.libroPortada && item.libroId) {
+                  <div class="feed-cover-aside">
+                    <a [routerLink]="['/libros', item.libroId]" class="feed-cover-link">
+                      <img [src]="item.libroPortada" [alt]="item.libroTitulo || 'Portada'" class="feed-cover-img" />
+                    </a>
+                    @if (porcentajeFeed(item); as pct) {
+                      <p class="feed-pct">{{ pct.toFixed(0) }} %</p>
+                      <div class="barra feed-mini-bar">
+                        <div class="relleno" [style.width.%]="clampPct(pct)"></div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </article>
+          } @empty {
+            <p class="nota">No hay actividad reciente. Sigue a más lectores en Comunidad o publica una reseña.</p>
+          }
+        </div>
+        @if (hayMas()) {
+          <div class="mas-wrap">
+            <button type="button" class="btn-mas" [disabled]="cargandoMas()" (click)="cargarMas()">
+              {{ cargandoMas() ? 'Cargando…' : 'Cargar más' }}
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,176 @@
+.detalle-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+  background: #f5eedd;
+}
+
+.detalle-panel {
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border-radius: 20px;
+  padding: 1.6rem 1.3rem 2rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 12px rgba(92, 64, 51, 0.08),
+    0 8px 28px rgba(92, 64, 51, 0.12);
+  border: 1px solid rgba(139, 115, 85, 0.22);
+}
+
+.detalle-cabecera {
+  margin-bottom: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.detalle-cabecera h1 {
+  margin: 0.55rem 0 0;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  color: #5c4033;
+}
+
+.link-back {
+  color: #ad7b59;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-back:hover {
+  color: #8b5f45;
+}
+
+.btn-selector {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  background: #ad7b59;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.grid-libros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.libro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+
+.libro-card:hover {
+  transform: translateY(-2px);
+}
+
+.portada-wrap {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+  background: #2d2620;
+  overflow: hidden;
+  box-shadow:
+    0 2px 6px rgba(47, 32, 22, 0.35),
+    0 0 0 1px rgba(92, 64, 51, 0.12);
+}
+
+.portada-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.portada-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+}
+
+.libro-card h2 {
+  margin: 0.1rem 0 0;
+  font-size: 0.97rem;
+  color: #5c4033;
+  text-align: center;
+}
+
+.libro-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7a5a44;
+  text-align: center;
+}
+
+.state-msg {
+  text-align: center;
+  color: #5c4033;
+}
+
+.state-msg.error {
+  color: #6b2c2c;
+}
+
+.selector-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(41, 29, 20, 0.35);
+  z-index: 1200;
+}
+
+.selector-panel {
+  width: min(300px, 80vw);
+  height: 100%;
+  background: rgba(243, 234, 216, 0.85);
+  backdrop-filter: blur(5px);
+  border-right: 1px solid rgba(139, 115, 85, 0.25);
+  box-shadow: 8px 0 22px rgba(41, 29, 20, 0.2);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.selector-panel h2 {
+  margin: 0;
+  color: #5c4033;
+}
+
+.selector-panel p {
+  margin: 0.25rem 0 0.9rem;
+  color: #7a5a44;
+}
+
+.selector-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.selector-item {
+  text-decoration: none;
+  color: #5c4033;
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(139, 115, 85, 0.28);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  font-weight: 600;
+}
+
+.selector-item.activa {
+  background: #ad7b59;
+  color: #fff;
+  border-color: #ad7b59;
+}

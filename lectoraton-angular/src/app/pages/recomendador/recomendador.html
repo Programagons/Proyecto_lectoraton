@@ -1,0 +1,119 @@
+<div class="reco-page">
+  <header class="reco-hero">
+    <h1>Recomendador</h1>
+    <p class="reco-lead">
+      Busca un libro por <strong>título</strong> y obtén una sugerencia parecida según géneros, tropos y autor.
+    </p>
+  </header>
+
+  <section class="reco-form" aria-label="Buscar libro por título">
+    <label class="reco-label" for="reco-busqueda">Buscar por título</label>
+    <div class="reco-search-wrap">
+      <input
+        id="reco-busqueda"
+        type="search"
+        class="reco-input"
+        [(ngModel)]="busqueda"
+        [ngModelOptions]="{ standalone: true }"
+        autocomplete="off"
+        placeholder="Escribe al menos 2 letras…"
+        (input)="onBusquedaInput()"
+        [attr.aria-expanded]="libroElegido() === null && sugerencias().length > 0"
+        [attr.aria-controls]="libroElegido() === null ? 'reco-sugerencias' : null"
+      />
+      @if (libroElegido(); as pick) {
+        <div class="reco-elegido" role="status">
+          <span class="reco-elegido-thumb-wrap" aria-hidden="true">
+            @if (portadaExplorar(pick); as ep) {
+              <img class="reco-elegido-thumb" [src]="ep" alt="" />
+            } @else {
+              <span class="reco-elegido-thumb reco-elegido-thumb--ph">{{ iniciales(pick.titulo) }}</span>
+            }
+          </span>
+          <div class="reco-elegido-body">
+            <span class="reco-elegido-titulo">{{ pick.titulo }}</span>
+            @if (pick.autorNombre) {
+              <span class="reco-elegido-meta">{{ pick.autorNombre }}</span>
+            }
+          </div>
+          <button type="button" class="reco-elegido-quitar" (click)="quitarSeleccion()" aria-label="Quitar libro elegido">
+            ×
+          </button>
+        </div>
+      }
+      @if (libroElegido() === null && busqueda.trim().length >= 2) {
+        <ul id="reco-sugerencias" class="reco-sugerencias" role="listbox">
+          @if (cargandoSugerencias()) {
+            <li class="reco-sugerencia reco-sugerencia--estado" role="presentation">Buscando…</li>
+          } @else if (sugerencias().length === 0) {
+            <li class="reco-sugerencia reco-sugerencia--estado" role="presentation">No hay coincidencias.</li>
+          } @else {
+            @for (l of sugerencias(); track l.id) {
+              <li role="option">
+                <button type="button" class="reco-sugerencia" (mousedown)="$event.preventDefault(); elegirLibro(l, $event)">
+                  <span class="reco-sugerencia-thumb-wrap" aria-hidden="true">
+                    @if (portadaExplorar(l); as su) {
+                      <img class="reco-sugerencia-thumb" [src]="su" alt="" />
+                    } @else {
+                      <span class="reco-sugerencia-thumb reco-sugerencia-thumb--ph">{{ iniciales(l.titulo) }}</span>
+                    }
+                  </span>
+                  <span class="reco-sugerencia-texto">
+                    <span class="reco-sugerencia-titulo">{{ l.titulo }}</span>
+                    @if (l.autorNombre) {
+                      <span class="reco-sugerencia-autor">{{ l.autorNombre }}</span>
+                    }
+                  </span>
+                </button>
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+    <div class="reco-row">
+      <button
+        type="button"
+        class="reco-btn"
+        [disabled]="libroElegido() == null || cargandoReco()"
+        (click)="pedirRecomendacion()"
+      >
+        @if (cargandoReco()) {
+          Buscando…
+        } @else {
+          Ver recomendación
+        }
+      </button>
+    </div>
+  </section>
+
+  @if (errorReco()) {
+    <p class="reco-error" role="alert">{{ errorReco() }}</p>
+  }
+
+  @if (resultado(); as r) {
+    <section class="reco-result" aria-live="polite">
+      <p class="reco-exp">{{ r.explicacion }}</p>
+      @if (r.recomendado) {
+        <article class="reco-card">
+          <a [routerLink]="['/libros', r.recomendado.id]" class="reco-cover-link">
+            @if (portadaReco(r.recomendado); as url) {
+              <img [src]="url" [alt]="'Portada de ' + r.recomendado.titulo" class="reco-cover" />
+            } @else {
+              <div class="reco-cover reco-cover--placeholder" aria-hidden="true">{{ iniciales(r.recomendado.titulo) }}</div>
+            }
+          </a>
+          <div class="reco-card-body">
+            <h2 class="reco-card-title">{{ r.recomendado.titulo }}</h2>
+            @if (r.recomendado.autorNombre) {
+              <p class="reco-card-author">{{ r.recomendado.autorNombre }}</p>
+            }
+            <a [routerLink]="['/libros', r.recomendado.id]" class="reco-card-link">Ver ficha</a>
+          </div>
+        </article>
+      } @else {
+        <p class="reco-vacio">No hay sugerencia disponible en este caso.</p>
+      }
+    </section>
+  }
+</div>

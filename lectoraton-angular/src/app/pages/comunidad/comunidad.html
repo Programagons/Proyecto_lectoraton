@@ -1,0 +1,91 @@
+<div class="comunidad-page">
+  <section class="comunidad-panel">
+    <h1>Comunidad</h1>
+    <p class="subtitle">Busca usuarios por nombre o usuario y agrégalos para seguir su actividad.</p>
+    <p class="clubs-proximo">Los clubs de lectura privados serán implementados como funcionalidad <strong>próximamente</strong>.</p>
+
+    <div class="tabs">
+      <button type="button" class="tab-btn" [class.active]="tabActiva() === 'buscar'" (click)="cambiarTab('buscar')">
+        Buscar
+      </button>
+      <button type="button" class="tab-btn" [class.active]="tabActiva() === 'siguiendo'" (click)="cambiarTab('siguiendo')">
+        Siguiendo ({{ listaSiguiendo().length }})
+      </button>
+    </div>
+
+    @if (tabActiva() === 'buscar') {
+      <div class="buscador-wrap">
+        <input
+          type="text"
+          [(ngModel)]="textoBusqueda"
+          (ngModelChange)="onBusquedaChange()"
+          placeholder="Ej. jdoe, Alice, Gonzalo..."
+        />
+      </div>
+
+      @if (error()) {
+        <p class="state-msg error" role="alert">{{ error() }}</p>
+      } @else if (textoBusqueda.trim().length < 2) {
+        <p class="state-msg">Escribe al menos 2 caracteres para buscar.</p>
+      } @else if (buscando()) {
+        <p class="state-msg">Buscando usuarios…</p>
+      } @else if (resultados().length === 0) {
+        <p class="state-msg">No se han encontrado usuarios parecidos.</p>
+      } @else {
+        <div class="resultados">
+          @for (u of resultados(); track u.id) {
+            <article class="usuario-card">
+              <div class="usuario-main">
+                <h2>{{ u.nombre }} {{ u.apellidos }}</h2>
+                <p class="username">@{{ u.username }}</p>
+                @if (u.bio) {
+                  <p class="bio">{{ u.bio }}</p>
+                }
+              </div>
+              <button
+                type="button"
+                class="btn-seguir"
+                [class.siguiendo]="esSeguido(u.id)"
+                [disabled]="estaActualizando(u.id)"
+                (click)="toggleSeguir(u)"
+              >
+                {{ estaActualizando(u.id) ? '...' : (esSeguido(u.id) ? 'Siguiendo' : 'Seguir') }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    } @else {
+      <p class="siguiendo-count">Usuarios seguidos: <strong>{{ listaSiguiendo().length }}</strong></p>
+      @if (error()) {
+        <p class="state-msg error" role="alert">{{ error() }}</p>
+      } @else if (cargandoSiguiendo()) {
+        <p class="state-msg">Cargando seguidos…</p>
+      } @else if (listaSiguiendo().length === 0) {
+        <p class="state-msg">Todavía no sigues a nadie.</p>
+      } @else {
+        <div class="resultados">
+          @for (u of listaSiguiendo(); track u.id) {
+            <article class="usuario-card">
+              <div class="usuario-main">
+                <h2>{{ u.nombre }} {{ u.apellidos }}</h2>
+                <p class="username">@{{ u.username }}</p>
+                @if (u.bio) {
+                  <p class="bio">{{ u.bio }}</p>
+                }
+              </div>
+              <button
+                type="button"
+                class="btn-seguir siguiendo"
+                [disabled]="estaActualizando(u.id)"
+                (click)="toggleSeguir(u)"
+              >
+                {{ estaActualizando(u.id) ? '...' : 'Siguiendo' }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    }
+  </section>
+</div>

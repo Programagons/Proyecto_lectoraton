@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-beige-bg: #F5EEDD;
+  --color-header: #EBD8AE;
+  --color-input: #E3C7A1;
+  --color-accent: #C7A183;
+  --color-button: #AD7B59;
+  --color-text: #5C4033;
+  --color-text-dark: #3d2b20;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--color-beige-bg);
+  color: var(--color-text);
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+a {
+  color: inherit;
+}

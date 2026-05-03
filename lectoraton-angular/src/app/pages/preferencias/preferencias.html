@@ -1,0 +1,11 @@
+<section class="preferencias-page">
+  <h1>Preferencias</h1>
+  <div class="card">
+    <label for="idiomaSelect">Idioma de la página</label>
+    <select id="idiomaSelect" [(ngModel)]="idioma">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+    </select>
+    <button type="button" (click)="guardarIdioma()">Guardar</button>
+  </div>
+</section>

@@ -1,0 +1,148 @@
+.comunidad-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+  background: #f5eedd;
+}
+
+.comunidad-panel {
+  background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
+  border-radius: 20px;
+  padding: 1.6rem 1.4rem 2rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 12px rgba(92, 64, 51, 0.08),
+    0 8px 28px rgba(92, 64, 51, 0.12);
+  border: 1px solid rgba(139, 115, 85, 0.22);
+}
+
+h1 {
+  margin: 0;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  color: #5c4033;
+}
+
+.subtitle {
+  text-align: center;
+  color: #7a5a44;
+  margin: 0.5rem 0 1rem;
+}
+
+.clubs-proximo {
+  text-align: center;
+  font-size: 0.88rem;
+  color: #8b7355;
+  margin: 0 0 1rem;
+  line-height: 1.4;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  background: #d7bea0;
+  color: #5c4033;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: #ad7b59;
+  color: #fff;
+}
+
+.buscador-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.buscador-wrap input {
+  width: min(520px, 100%);
+  border: none;
+  border-radius: 999px;
+  background: #e3c7a1;
+  color: #5c4033;
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+}
+
+.state-msg {
+  text-align: center;
+  color: #5c4033;
+}
+
+.state-msg.error {
+  color: #6b2c2c;
+}
+
+.siguiendo-count {
+  margin: 0 0 0.8rem;
+  text-align: center;
+  color: #6f4f3a;
+}
+
+.resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.usuario-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(139, 115, 85, 0.24);
+  border-radius: 14px;
+  padding: 0.75rem 0.9rem;
+}
+
+.usuario-main h2 {
+  margin: 0;
+  color: #5c4033;
+  font-size: 1.05rem;
+}
+
+.username {
+  margin: 0.15rem 0 0;
+  color: #8b5f45;
+  font-weight: 600;
+}
+
+.bio {
+  margin: 0.25rem 0 0;
+  color: #7a5a44;
+  font-size: 0.9rem;
+}
+
+.btn-seguir {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  background: #ad7b59;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-seguir.siguiendo {
+  background: #6b8a60;
+}
+
+.btn-seguir:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}

@@ -1,0 +1,448 @@
+<div class="libro-page">
+  @if (loading()) {
+    <p class="state-msg">Cargando libro…</p>
+  } @else if (error()) {
+    <p class="state-msg error">{{ error() }}</p>
+  } @else if (detalle(); as det) {
+    <section class="ficha-libro">
+      <div class="portada-col">
+        <img [src]="det.portada || ''" [alt]="'Portada de ' + det.titulo" class="portada-principal" />
+        <div class="portada-acciones">
+          <button type="button" class="btn-agregar" [class.soft]="det.yaEnAlgunaBiblioteca" (click)="abrirAgregarModal()">
+            {{ det.yaEnAlgunaBiblioteca ? 'Agregar a otra biblioteca' : 'Agregar libro' }}
+          </button>
+          <div class="media-portada">
+            <span class="stars">{{ estrellas(det.resumenResenas.mediaCalificaciones).join(' ') }}</span>
+            <p>Media {{ det.resumenResenas.mediaCalificaciones.toFixed(1) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-col">
+        <a routerLink="/bibliotecas" class="link-back">← Volver a bibliotecas</a>
+        @if (getSagaTexto(det); as sagaTxt) {
+          <p class="saga-ref">{{ sagaTxt }}</p>
+        }
+        <h1 class="titulo-libro">{{ det.titulo }}</h1>
+        <h2 class="autor-libro">{{ det.autorNombre }}</h2>
+        <p class="sinopsis">{{ det.sinopsis }}</p>
+        <div class="meta-line"><strong>Géneros:</strong> {{ det.generos.join(', ') }}</div>
+        <div class="meta-line"><strong>Tropos:</strong> {{ det.tropos.join(', ') }}</div>
+        <div class="meta-line"><strong>Páginas:</strong> {{ det.paginas || '-' }}</div>
+        <div class="meta-line"><strong>Publicado:</strong> {{ det.fechaPublicacion || '-' }}</div>
+      </div>
+    </section>
+
+    @if (det.miProgreso; as mp) {
+      <section class="panel-progreso" id="bloque-progreso" aria-labelledby="titulo-progreso">
+        <h3 id="titulo-progreso">Progreso</h3>
+        <p class="progreso-meta">
+          @if (mp.paginasTotales) {
+            <span>{{ mp.paginaActual }} / {{ mp.paginasTotales }} páginas</span>
+            <span class="sep">·</span>
+          }
+          <span>{{ mp.porcentaje.toFixed(1) }} %</span>
+          @if (mp.fechaActualizacion) {
+            <span class="sep">·</span>
+            <span class="muted">Actualizado {{ mp.fechaActualizacion | date: 'short' }}</span>
+          }
+        </p>
+        <div class="barra barra-progreso-lectura" role="progressbar" [attr.aria-valuenow]="mp.porcentaje" aria-valuemin="0" aria-valuemax="100">
+          <div class="relleno" [style.width.%]="clampPorcentaje(mp.porcentaje)"></div>
+        </div>
+        <div class="progreso-form">
+          <label class="progreso-label">
+            Página actual
+            <input type="number" min="0" [attr.max]="det.paginas ?? null" name="progresoPagina" [(ngModel)]="progresoPagina" class="input-pagina" />
+          </label>
+          <label class="progreso-label">
+            Estado
+            <select name="progresoEstado" [(ngModel)]="progresoEstado" class="select-estado">
+              <option value="">Automático (según página)</option>
+              <option value="quiero_leer">Quiero leer</option>
+              <option value="leyendo">Leyendo</option>
+              <option value="leido">Leído</option>
+              <option value="abandonado">Abandonado</option>
+            </select>
+          </label>
+          <button type="button" class="btn-guardar-progreso" [disabled]="guardandoProgreso()" (click)="guardarProgreso(det)">
+            {{ guardandoProgreso() ? 'Guardando…' : 'Guardar progreso' }}
+          </button>
+        </div>
+        @if (progresoError()) {
+          <p class="progreso-feedback error">{{ progresoError() }}</p>
+        }
+        @if (progresoOk()) {
+          <p class="progreso-feedback ok">{{ progresoOk() }}</p>
+        }
+      </section>
+    }
+
+    <section class="panel-resumen">
+      <div class="metrica-amigos">
+        <p><strong>Amigos que lo han leído:</strong></p>
+        <div class="amigos-list">
+          @for (amigo of det.amigosQueHanLeido; track amigo.id) {
+            <div class="amigo-item" [title]="amigo.nombreCompleto">
+              @if (amigo.icono) {
+                <img [src]="amigo.icono" alt="" />
+              } @else {
+                <span>{{ amigo.username.charAt(0).toUpperCase() }}</span>
+              }
+            </div>
+          } @empty {
+            <span class="muted">Aún no hay amigos lectores.</span>
+          }
+        </div>
+      </div>
+
+      <div class="resumen-resenas">
+        <h3>Reseñas</h3>
+        <p class="resumen-nota-info">
+          {{ det.resumenResenas.totalCalificaciones }} reseñas con nota de un total de {{ det.resumenResenas.totalResenas }} reseñas.
+        </p>
+        @for (estrella of [5,4,3,2,1]; track estrella) {
+          <div class="barra-row">
+            <span>{{ estrella }}★</span>
+            <div class="barra">
+              <div
+                class="relleno"
+                [style.width.%]="det.resumenResenas.totalCalificaciones ? ((det.resumenResenas.distribucionEstrellas[estrella] || 0) * 100 / det.resumenResenas.totalCalificaciones) : 0"
+              ></div>
+            </div>
+            <span>{{ det.resumenResenas.distribucionEstrellas[estrella] || 0 }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="resenas-panel">
+      <h3>Reseñas <span class="resenas-count">· {{ det.resumenResenas.totalResenas }}</span></h3>
+      @if (miResena(); as mi) {
+        <article class="resena-card mi-resena-card">
+          <div class="avatar">
+            @if (mi.usuarioIcono) {
+              <img [src]="mi.usuarioIcono" alt="" />
+            } @else {
+              <span>{{ mi.usuarioNombre.charAt(0).toUpperCase() }}</span>
+            }
+          </div>
+          <div class="contenido">
+            <p class="autor">Tu reseña · {{ mi.usuarioNombre }}</p>
+            <p class="stars">{{ estrellas(mi.calificacion).join(' ') }}</p>
+            @if (mi.titulo) {
+              <p class="resena-titulo">{{ mi.titulo }}</p>
+            }
+            @if (mi.contieneSpoiler && !spoilerResenaVisible(mi.id)) {
+              <div class="spoiler-box">
+                <p class="spoiler-label">¡Tu reseña contiene spoilers!</p>
+                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">Mostrar reseña</button>
+              </div>
+            } @else {
+              <p>{{ mi.contenido }}</p>
+              @if (mi.contieneSpoiler) {
+                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">Ocultar reseña</button>
+              }
+            }
+            <div class="resena-acciones">
+              <button
+                type="button"
+                class="accion-btn like-btn"
+                [class.active]="mi.likedByCurrentUser"
+                (click)="toggleLikeResena(mi.id)"
+              >
+                <span class="icono">♥</span>
+                <span>{{ mi.numLikes }}</span>
+              </button>
+              <button type="button" class="accion-btn" (click)="toggleComentarios(mi.id)">
+                <span class="icono">💬</span>
+                <span>{{ mi.numComentarios }}</span>
+              </button>
+              <button type="button" class="accion-btn danger-btn" [disabled]="borrandoMiResena()" (click)="borrarMiResena()">
+                {{ borrandoMiResena() ? 'Eliminando…' : 'Eliminar mi reseña' }}
+              </button>
+            </div>
+
+            @if (comentariosEstanAbiertos(mi.id)) {
+              <div class="comentarios-box">
+                @if (cargandoComentarios()[mi.id]) {
+                  <p class="comentario-estado">Cargando comentarios…</p>
+                } @else {
+                  <div class="comentarios-lista">
+                    @for (comentario of getComentariosResena(mi.id); track comentario.id) {
+                      <div class="comentario-item">
+                        <p class="comentario-autor">{{ comentario.usuarioNombre }}</p>
+                        @if (comentario.contieneSpoiler && !spoilerComentarioVisible(mi.id, comentario.id)) {
+                          <div class="spoiler-box">
+                            <p class="spoiler-label">¡Comentario con spoiler!</p>
+                            <button
+                              type="button"
+                              class="spoiler-toggle-btn"
+                              (click)="toggleSpoilerComentario(mi.id, comentario.id)"
+                            >
+                              Mostrar comentario
+                            </button>
+                          </div>
+                        } @else {
+                          <p class="comentario-texto">{{ comentario.contenido }}</p>
+                          @if (comentario.contieneSpoiler) {
+                            <button
+                              type="button"
+                              class="spoiler-toggle-btn"
+                              (click)="toggleSpoilerComentario(mi.id, comentario.id)"
+                            >
+                              Ocultar comentario
+                            </button>
+                          }
+                        }
+                      </div>
+                    } @empty {
+                      <p class="comentario-estado">Todavía no hay comentarios.</p>
+                    }
+                  </div>
+                }
+
+                <div class="comentario-form">
+                  <textarea
+                    placeholder="Escribe un comentario..."
+                    [ngModel]="getComentarioTexto(mi.id)"
+                    (ngModelChange)="setComentarioTexto(mi.id, $event)"
+                  ></textarea>
+                  <label class="spoiler-check">
+                    <input
+                      type="checkbox"
+                      [ngModel]="getComentarioEsSpoiler(mi.id)"
+                      (ngModelChange)="setComentarioEsSpoiler(mi.id, $event)"
+                    />
+                    ¿Contiene spoilers?
+                  </label>
+                  @if (comentarioErrorPorResena()[mi.id]) {
+                    <p class="comentario-error">{{ comentarioErrorPorResena()[mi.id] }}</p>
+                  }
+                  <button type="button" class="btn-comentar" [disabled]="enviandoComentario()[mi.id]" (click)="enviarComentario(mi.id)">
+                    {{ enviandoComentario()[mi.id] ? 'Enviando…' : 'Comentar' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </article>
+      }
+
+      <div class="crear-resena-box">
+        <h4>{{ miResena() ? 'Edita tu reseña' : 'Deja tu reseña' }}</h4>
+        <div class="form-resena">
+          <input type="text" placeholder="Título de la reseña (opcional)" [(ngModel)]="resenaNuevaTitulo" />
+          <textarea placeholder="Escribe tu reseña..." [(ngModel)]="resenaNuevaContenido"></textarea>
+          <div class="calificacion-estrellas-wrap">
+            <span>Calificación (opcional):</span>
+            <div class="input-estrellas" (mouseleave)="clearHoverCalificacionResena()">
+              @for (estrella of estrellasInput(); track estrella) {
+                <button
+                  type="button"
+                  class="star-input-btn"
+                  [class.active]="estrellaResenaActiva(estrella)"
+                  (mouseenter)="onHoverCalificacionResena(estrella)"
+                  (click)="seleccionarCalificacionResena(estrella)"
+                >
+                  ★
+                </button>
+              }
+            </div>
+            <button type="button" class="limpiar-calificacion-btn" (click)="seleccionarCalificacionResena(0)">Quitar nota</button>
+          </div>
+          <label class="spoiler-check">
+            <input type="checkbox" [(ngModel)]="resenaNuevaSpoiler" />
+            Esta reseña contiene spoilers
+          </label>
+          @if (crearResenaError()) {
+            <p class="comentario-error">{{ crearResenaError() }}</p>
+          }
+          @if (crearResenaOk()) {
+            <p class="ok-msg">{{ crearResenaOk() }}</p>
+          }
+          <button type="button" class="btn-comentar" [disabled]="creandoResena()" (click)="crearResena()">
+            {{ creandoResena() ? 'Guardando…' : (miResena() ? 'Guardar cambios' : 'Publicar reseña') }}
+          </button>
+        </div>
+      </div>
+
+      <div class="resenas-tools">
+        <input type="text" placeholder="Buscar en reseñas..." [(ngModel)]="textoResenas" (ngModelChange)="onBusquedaResenasChange()" />
+        <select [(ngModel)]="filtroResenas" (change)="onFiltroResenasChange()">
+          <option value="fechaCreacion,desc">Más recientes</option>
+          <option value="fechaCreacion,asc">Más antiguas</option>
+          <option value="calificacion,desc">Mejor valoradas</option>
+          <option value="calificacion,asc">Peor valoradas</option>
+        </select>
+      </div>
+      @if (cargandoResenas()) {
+        <p class="state-msg">Cargando reseñas…</p>
+      } @else {
+        @for (r of resenasSinMiResena(); track r.id) {
+          <article class="resena-card">
+            <div class="avatar">
+              @if (r.usuarioIcono) {
+                <img [src]="r.usuarioIcono" alt="" />
+              } @else {
+                <span>{{ r.usuarioNombre.charAt(0).toUpperCase() }}</span>
+              }
+            </div>
+            <div class="contenido">
+              <p class="autor">{{ r.usuarioNombre }}</p>
+              <p class="stars">{{ estrellas(r.calificacion).join(' ') }}</p>
+              @if (r.titulo) {
+                <p class="resena-titulo">{{ r.titulo }}</p>
+              }
+              @if (r.contieneSpoiler && !spoilerResenaVisible(r.id)) {
+                <div class="spoiler-box">
+                  <p class="spoiler-label">¡Esta reseña contiene spoilers!</p>
+                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">Mostrar reseña</button>
+                </div>
+              } @else {
+                <p>{{ r.contenido }}</p>
+                @if (r.contieneSpoiler) {
+                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">Ocultar reseña</button>
+                }
+              }
+              <div class="resena-acciones">
+                <button
+                  type="button"
+                  class="accion-btn like-btn"
+                  [class.active]="r.likedByCurrentUser"
+                  (click)="toggleLikeResena(r.id)"
+                >
+                  <span class="icono">♥</span>
+                  <span>{{ r.numLikes }}</span>
+                </button>
+                <button type="button" class="accion-btn" (click)="toggleComentarios(r.id)">
+                  <span class="icono">💬</span>
+                  <span>{{ r.numComentarios }}</span>
+                </button>
+              </div>
+
+              @if (comentariosEstanAbiertos(r.id)) {
+                <div class="comentarios-box">
+                  @if (cargandoComentarios()[r.id]) {
+                    <p class="comentario-estado">Cargando comentarios…</p>
+                  } @else {
+                    <div class="comentarios-lista">
+                      @for (comentario of getComentariosResena(r.id); track comentario.id) {
+                        <div class="comentario-item">
+                          <p class="comentario-autor">{{ comentario.usuarioNombre }}</p>
+                          @if (comentario.contieneSpoiler && !spoilerComentarioVisible(r.id, comentario.id)) {
+                            <div class="spoiler-box">
+                              <p class="spoiler-label">¡Comentario con spoiler!</p>
+                              <button
+                                type="button"
+                                class="spoiler-toggle-btn"
+                                (click)="toggleSpoilerComentario(r.id, comentario.id)"
+                              >
+                                Mostrar comentario
+                              </button>
+                            </div>
+                          } @else {
+                            <p class="comentario-texto">{{ comentario.contenido }}</p>
+                            @if (comentario.contieneSpoiler) {
+                              <button
+                                type="button"
+                                class="spoiler-toggle-btn"
+                                (click)="toggleSpoilerComentario(r.id, comentario.id)"
+                              >
+                                Ocultar comentario
+                              </button>
+                            }
+                          }
+                        </div>
+                      } @empty {
+                        <p class="comentario-estado">Todavía no hay comentarios.</p>
+                      }
+                    </div>
+                  }
+
+                  <div class="comentario-form">
+                    <textarea
+                      placeholder="Escribe un comentario..."
+                      [ngModel]="getComentarioTexto(r.id)"
+                      (ngModelChange)="setComentarioTexto(r.id, $event)"
+                    ></textarea>
+                    <label class="spoiler-check">
+                      <input
+                        type="checkbox"
+                        [ngModel]="getComentarioEsSpoiler(r.id)"
+                        (ngModelChange)="setComentarioEsSpoiler(r.id, $event)"
+                      />
+                      ¿Contiene spoilers?
+                    </label>
+                    @if (comentarioErrorPorResena()[r.id]) {
+                      <p class="comentario-error">{{ comentarioErrorPorResena()[r.id] }}</p>
+                    }
+                    <button type="button" class="btn-comentar" [disabled]="enviandoComentario()[r.id]" (click)="enviarComentario(r.id)">
+                      {{ enviandoComentario()[r.id] ? 'Enviando…' : 'Comentar' }}
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </article>
+        } @empty {
+          <p class="state-msg">No hay reseñas con ese filtro.</p>
+        }
+      }
+    </section>
+
+    <section class="relacionados-panel">
+      <h3>Otros libros parecidos</h3>
+      <div class="grid-mini">
+        @for (libro of det.otrosParecidos; track libro.id) {
+          <a [routerLink]="['/libros', libro.id]" class="mini-card">
+            <img [src]="libro.portada || ''" alt="" />
+            <span>{{ libro.titulo }}</span>
+          </a>
+        } @empty {
+          <p class="muted">Sin sugerencias por ahora.</p>
+        }
+      </div>
+
+      <h3>Otros libros del mismo autor</h3>
+      <div class="grid-mini">
+        @for (libro of det.otrosMismoAutor; track libro.id) {
+          <a [routerLink]="['/libros', libro.id]" class="mini-card">
+            <img [src]="libro.portada || ''" alt="" />
+            <span>{{ libro.titulo }}</span>
+          </a>
+        } @empty {
+          <p class="muted">No hay más libros del autor.</p>
+        }
+      </div>
+    </section>
+  }
+
+  @if (showAgregarModal()) {
+    <div class="modal-backdrop" (click)="cerrarAgregarModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <h3>Agregar a biblioteca</h3>
+        <label for="bibliotecaSelect">Biblioteca</label>
+        <select id="bibliotecaSelect" [(ngModel)]="bibliotecaSeleccionadaId">
+          @for (b of bibliotecas(); track b.id) {
+            <option [ngValue]="b.id" [disabled]="bibliotecaTieneLibro(b)">
+              {{ b.nombre }}{{ bibliotecaTieneLibro(b) ? ' (ya añadido)' : '' }}
+            </option>
+          }
+        </select>
+        @if (!hayBibliotecasDisponibles()) {
+          <p class="state-msg">Este libro ya está en todas tus bibliotecas.</p>
+        }
+        @if (agregarError()) {
+          <p class="state-msg error">{{ agregarError() }}</p>
+        }
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarAgregarModal()">Cancelar</button>
+          <button type="button" class="btn-primary" [disabled]="agregando() || !hayBibliotecasDisponibles()" (click)="agregarLibroABiblioteca()">
+            {{ agregando() ? 'Agregando…' : 'Agregar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
