@@ -2,13 +2,14 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FeedItemDTO, FeedService } from '../../core/feed/feed.service';
 import { LibroService, PageDTO, UltimoProgresoLibroDTO } from '../../core/libro/libro.service';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink, FormsModule, DatePipe],
+  imports: [RouterLink, FormsModule, DatePipe, TranslatePipe],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
@@ -20,6 +21,7 @@ export class InicioPage implements OnInit {
   protected readonly cargandoMas = signal(false);
   protected readonly ultimoProgreso = signal<UltimoProgresoLibroDTO | null>(null);
   protected readonly cargandoUltimo = signal(true);
+  protected readonly spoilersVisibles = signal<Record<number, boolean>>({});
   protected incluirPropias = true;
   private page = 0;
   private readonly pageSize = 20;
@@ -27,6 +29,7 @@ export class InicioPage implements OnInit {
   constructor(
     private readonly feedService: FeedService,
     private readonly libroService: LibroService,
+    private readonly translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -37,11 +40,11 @@ export class InicioPage implements OnInit {
   protected etiquetaTipo(tipo: string): string {
     switch (tipo) {
       case 'RESENA':
-        return 'Reseña';
+        return 'inicio.type.review';
       case 'PROGRESO':
-        return 'Progreso';
+        return 'inicio.type.progress';
       case 'COMENTARIO':
-        return 'Comentario';
+        return 'inicio.type.comment';
       default:
         return tipo;
     }
@@ -51,7 +54,6 @@ export class InicioPage implements OnInit {
     return Math.min(100, Math.max(0, valor));
   }
 
-  /** Calcula % desde el texto del backend tipo PROGRESO y páginas del libro. */
   protected porcentajeFeed(item: FeedItemDTO): number | null {
     if (item.tipo !== 'PROGRESO' || !item.libroNumPaginas || item.libroNumPaginas <= 0) {
       return null;
@@ -71,6 +73,17 @@ export class InicioPage implements OnInit {
     this.recargar();
   }
 
+  protected toggleSpoiler(itemId: number): void {
+    this.spoilersVisibles.update((actual) => ({
+      ...actual,
+      [itemId]: !actual[itemId],
+    }));
+  }
+
+  protected spoilerVisible(itemId: number): boolean {
+    return !!this.spoilersVisibles()[itemId];
+  }
+
   protected cargarMas(): void {
     if (!this.hayMas() || this.cargandoMas()) {
       return;
@@ -80,7 +93,7 @@ export class InicioPage implements OnInit {
     this.feedService.getFeedMio(this.page, this.pageSize, this.incluirPropias).subscribe({
       next: (page) => {
         this.cargandoMas.set(false);
-        const nuevos = page.content || [];
+        const nuevos = page.content ?? [];
         this.items.update((act) => [...act, ...nuevos]);
         this.hayMas.set(this.hayMasTrasPagina(page));
       },
@@ -118,12 +131,12 @@ export class InicioPage implements OnInit {
     this.page = 0;
     this.feedService.getFeedMio(0, this.pageSize, this.incluirPropias).subscribe({
       next: (page) => {
-        this.items.set(page.content || []);
+        this.items.set(page.content ?? []);
         this.hayMas.set(this.hayMasTrasPagina(page));
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar el feed.');
+        this.error.set(this.translate.instant('inicio.errorFeed'));
         this.loading.set(false);
       },
     });

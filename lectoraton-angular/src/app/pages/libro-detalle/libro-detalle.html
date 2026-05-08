@@ -1,6 +1,6 @@
 <div class="libro-page">
   @if (loading()) {
-    <p class="state-msg">Cargando libro…</p>
+    <p class="state-msg">{{ 'bookDetail.loadingBook' | translate }}</p>
   } @else if (error()) {
     <p class="state-msg error">{{ error() }}</p>
   } @else if (detalle(); as det) {
@@ -9,64 +9,74 @@
         <img [src]="det.portada || ''" [alt]="'Portada de ' + det.titulo" class="portada-principal" />
         <div class="portada-acciones">
           <button type="button" class="btn-agregar" [class.soft]="det.yaEnAlgunaBiblioteca" (click)="abrirAgregarModal()">
-            {{ det.yaEnAlgunaBiblioteca ? 'Agregar a otra biblioteca' : 'Agregar libro' }}
+            <!-- Se muestra el botón para agregar el libro a otra biblioteca -->
+            {{ det.yaEnAlgunaBiblioteca ? ('bookDetail.addToAnotherLibrary' | translate) : ('bookDetail.addBook' | translate) }}
           </button>
           <div class="media-portada">
+            <!-- Se muestra la media de las calificaciones de las reseñas -->
             <span class="stars">{{ estrellas(det.resumenResenas.mediaCalificaciones).join(' ') }}</span>
-            <p>Media {{ det.resumenResenas.mediaCalificaciones.toFixed(1) }}</p>
+            <p>{{ 'bookDetail.average' | translate }} {{ det.resumenResenas.mediaCalificaciones.toFixed(1) }}</p>
           </div>
         </div>
       </div>
-
+      <!-- Se muestra la información del libro -->
       <div class="info-col">
-        <a routerLink="/bibliotecas" class="link-back">← Volver a bibliotecas</a>
+        <a routerLink="/bibliotecas" class="link-back">← {{ 'libraryDetail.backToLibraries' | translate }}</a>
         @if (getSagaTexto(det); as sagaTxt) {
           <p class="saga-ref">{{ sagaTxt }}</p>
         }
         <h1 class="titulo-libro">{{ det.titulo }}</h1>
         <h2 class="autor-libro">{{ det.autorNombre }}</h2>
         <p class="sinopsis">{{ det.sinopsis }}</p>
-        <div class="meta-line"><strong>Géneros:</strong> {{ det.generos.join(', ') }}</div>
-        <div class="meta-line"><strong>Tropos:</strong> {{ det.tropos.join(', ') }}</div>
-        <div class="meta-line"><strong>Páginas:</strong> {{ det.paginas || '-' }}</div>
-        <div class="meta-line"><strong>Publicado:</strong> {{ det.fechaPublicacion || '-' }}</div>
+        <div class="meta-line"><strong>{{ 'bookDetail.genres' | translate }}:</strong> {{ det.generos.join(', ') }}</div>
+        <div class="meta-line"><strong>{{ 'bookDetail.tropes' | translate }}:</strong> {{ det.tropos.join(', ') }}</div>
+        <div class="meta-line"><strong>{{ 'addBook.pages' | translate }}:</strong> {{ det.paginas || '-' }}</div>
+        <div class="meta-line"><strong>{{ 'bookDetail.published' | translate }}:</strong> {{ det.fechaPublicacion || '-' }}</div>
       </div>
     </section>
 
+    <!-- Se muestra el panel de progreso de lectura -->
     @if (det.miProgreso; as mp) {
       <section class="panel-progreso" id="bloque-progreso" aria-labelledby="titulo-progreso">
-        <h3 id="titulo-progreso">Progreso</h3>
+        <h3 id="titulo-progreso">{{ 'bookDetail.progress' | translate }}</h3>
         <p class="progreso-meta">
+          <!-- Se muestra el progreso de lectura -->
           @if (mp.paginasTotales) {
-            <span>{{ mp.paginaActual }} / {{ mp.paginasTotales }} páginas</span>
+            <!-- Se muestra el progreso de lectura en páginas -->
+            <span>{{ mp.paginaActual }} / {{ mp.paginasTotales }} {{ 'bookDetail.pagesWord' | translate }}</span>
             <span class="sep">·</span>
           }
+          <!-- Se muestra el progreso de lectura en porcentaje -->
           <span>{{ mp.porcentaje.toFixed(1) }} %</span>
           @if (mp.fechaActualizacion) {
             <span class="sep">·</span>
-            <span class="muted">Actualizado {{ mp.fechaActualizacion | date: 'short' }}</span>
+            <span class="muted">{{ 'bookDetail.updated' | translate }} {{ mp.fechaActualizacion | date: 'short' }}</span>
           }
         </p>
+        <!-- Se muestra la barra de progreso de lectura -->
         <div class="barra barra-progreso-lectura" role="progressbar" [attr.aria-valuenow]="mp.porcentaje" aria-valuemin="0" aria-valuemax="100">
           <div class="relleno" [style.width.%]="clampPorcentaje(mp.porcentaje)"></div>
         </div>
+        <!-- Se muestra el formulario de progreso de lectura -->
         <div class="progreso-form">
+          <!-- Se muestra el campo de página actual -->
           <label class="progreso-label">
-            Página actual
+            {{ 'bookDetail.currentPage' | translate }}
             <input type="number" min="0" [attr.max]="det.paginas ?? null" name="progresoPagina" [(ngModel)]="progresoPagina" class="input-pagina" />
           </label>
           <label class="progreso-label">
-            Estado
+            {{ 'bookDetail.status' | translate }}
             <select name="progresoEstado" [(ngModel)]="progresoEstado" class="select-estado">
-              <option value="">Automático (según página)</option>
-              <option value="quiero_leer">Quiero leer</option>
-              <option value="leyendo">Leyendo</option>
-              <option value="leido">Leído</option>
-              <option value="abandonado">Abandonado</option>
+              <option value="">{{ 'bookDetail.statusAuto' | translate }}</option>
+              <option value="quiero_leer">{{ 'bookDetail.statusWantToRead' | translate }}</option>
+              <option value="leyendo">{{ 'bookDetail.statusReading' | translate }}</option>
+              <option value="leido">{{ 'bookDetail.statusRead' | translate }}</option>
+              <option value="abandonado">{{ 'bookDetail.statusDropped' | translate }}</option>
             </select>
           </label>
+          <!-- Se muestra el botón para guardar el progreso de lectura -->
           <button type="button" class="btn-guardar-progreso" [disabled]="guardandoProgreso()" (click)="guardarProgreso(det)">
-            {{ guardandoProgreso() ? 'Guardando…' : 'Guardar progreso' }}
+            {{ guardandoProgreso() ? ('bookDetail.saving' | translate) : ('bookDetail.saveProgress' | translate) }}
           </button>
         </div>
         @if (progresoError()) {
@@ -78,10 +88,13 @@
       </section>
     }
 
+    <!-- Se muestra el panel de resumen -->
     <section class="panel-resumen">
+      <!-- Se muestra la métrica de amigos que han leido el libro -->
       <div class="metrica-amigos">
-        <p><strong>Amigos que lo han leído:</strong></p>
+        <p><strong>{{ 'bookDetail.friendsRead' | translate }}:</strong></p>
         <div class="amigos-list">
+          <!-- Se muestran los amigos que han leido el libro -->
           @for (amigo of det.amigosQueHanLeido; track amigo.id) {
             <div class="amigo-item" [title]="amigo.nombreCompleto">
               @if (amigo.icono) {
@@ -91,16 +104,18 @@
               }
             </div>
           } @empty {
-            <span class="muted">Aún no hay amigos lectores.</span>
+            <span class="muted">{{ 'bookDetail.noFriendsReaders' | translate }}</span>
           }
         </div>
       </div>
 
+      <!-- Se muestra el panel de reseñas -->
       <div class="resumen-resenas">
-        <h3>Reseñas</h3>
+        <h3>{{ 'bookDetail.reviews' | translate }}</h3>
         <p class="resumen-nota-info">
           {{ det.resumenResenas.totalCalificaciones }} reseñas con nota de un total de {{ det.resumenResenas.totalResenas }} reseñas.
         </p>
+        <!-- Se muestra la distribución de las estrellas de las reseñas -->
         @for (estrella of [5,4,3,2,1]; track estrella) {
           <div class="barra-row">
             <span>{{ estrella }}★</span>
@@ -116,9 +131,11 @@
       </div>
     </section>
 
+    <!-- Se muestra el panel de reseñas -->
     <section class="resenas-panel">
-      <h3>Reseñas <span class="resenas-count">· {{ det.resumenResenas.totalResenas }}</span></h3>
+      <h3>{{ 'bookDetail.reviews' | translate }} <span class="resenas-count">· {{ det.resumenResenas.totalResenas }}</span></h3>
       @if (miResena(); as mi) {
+        <!-- Se muestra la reseña propia del usuario -->
         <article class="resena-card mi-resena-card">
           <div class="avatar">
             @if (mi.usuarioIcono) {
@@ -128,23 +145,30 @@
             }
           </div>
           <div class="contenido">
-            <p class="autor">Tu reseña · {{ mi.usuarioNombre }}</p>
+            <!-- Se muestra el autor de la reseña -->
+            <p class="autor">{{ 'bookDetail.yourReview' | translate }} · {{ mi.usuarioNombre }}</p>
+            <!-- Se muestra la calificación de la reseña -->
             <p class="stars">{{ estrellas(mi.calificacion).join(' ') }}</p>
+            <!-- Se muestra el título de la reseña -->
             @if (mi.titulo) {
               <p class="resena-titulo">{{ mi.titulo }}</p>
             }
             @if (mi.contieneSpoiler && !spoilerResenaVisible(mi.id)) {
+              <!-- Se muestra el spoiler de la reseña -->
               <div class="spoiler-box">
-                <p class="spoiler-label">¡Tu reseña contiene spoilers!</p>
-                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">Mostrar reseña</button>
+                <p class="spoiler-label">{{ 'bookDetail.yourReviewHasSpoilers' | translate }}</p>
+                <!-- Se muestra el botón para mostrar el spoiler de la reseña -->
+                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">{{ 'bookDetail.showReview' | translate }}</button>
               </div>
             } @else {
               <p>{{ mi.contenido }}</p>
               @if (mi.contieneSpoiler) {
-                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">Ocultar reseña</button>
+                <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(mi.id)">{{ 'bookDetail.hideReview' | translate }}</button>
               }
             }
+            <!-- Se muestran las acciones de la reseña -->
             <div class="resena-acciones">
+              <!-- Se muestra el botón para dar like a la reseña -->
               <button
                 type="button"
                 class="accion-btn like-btn"
@@ -159,14 +183,16 @@
                 <span>{{ mi.numComentarios }}</span>
               </button>
               <button type="button" class="accion-btn danger-btn" [disabled]="borrandoMiResena()" (click)="borrarMiResena()">
-                {{ borrandoMiResena() ? 'Eliminando…' : 'Eliminar mi reseña' }}
+                {{ borrandoMiResena() ? ('libraries.deleting' | translate) : ('bookDetail.deleteMyReview' | translate) }}
               </button>
             </div>
 
+            <!-- Se muestran los comentarios de la reseña -->
             @if (comentariosEstanAbiertos(mi.id)) {
+              <!-- Se muestra el box de comentarios -->
               <div class="comentarios-box">
                 @if (cargandoComentarios()[mi.id]) {
-                  <p class="comentario-estado">Cargando comentarios…</p>
+                  <p class="comentario-estado">{{ 'bookDetail.loadingComments' | translate }}</p>
                 } @else {
                   <div class="comentarios-lista">
                     @for (comentario of getComentariosResena(mi.id); track comentario.id) {
@@ -174,13 +200,13 @@
                         <p class="comentario-autor">{{ comentario.usuarioNombre }}</p>
                         @if (comentario.contieneSpoiler && !spoilerComentarioVisible(mi.id, comentario.id)) {
                           <div class="spoiler-box">
-                            <p class="spoiler-label">¡Comentario con spoiler!</p>
+                            <p class="spoiler-label">{{ 'bookDetail.commentHasSpoiler' | translate }}</p>
                             <button
                               type="button"
                               class="spoiler-toggle-btn"
                               (click)="toggleSpoilerComentario(mi.id, comentario.id)"
                             >
-                              Mostrar comentario
+                              {{ 'bookDetail.showComment' | translate }}
                             </button>
                           </div>
                         } @else {
@@ -191,20 +217,20 @@
                               class="spoiler-toggle-btn"
                               (click)="toggleSpoilerComentario(mi.id, comentario.id)"
                             >
-                              Ocultar comentario
+                              {{ 'bookDetail.hideComment' | translate }}
                             </button>
                           }
                         }
                       </div>
                     } @empty {
-                      <p class="comentario-estado">Todavía no hay comentarios.</p>
+                      <p class="comentario-estado">{{ 'bookDetail.noCommentsYet' | translate }}</p>
                     }
                   </div>
                 }
 
                 <div class="comentario-form">
                   <textarea
-                    placeholder="Escribe un comentario..."
+                    [placeholder]="'bookDetail.writeCommentPlaceholder' | translate"
                     [ngModel]="getComentarioTexto(mi.id)"
                     (ngModelChange)="setComentarioTexto(mi.id, $event)"
                   ></textarea>
@@ -214,13 +240,13 @@
                       [ngModel]="getComentarioEsSpoiler(mi.id)"
                       (ngModelChange)="setComentarioEsSpoiler(mi.id, $event)"
                     />
-                    ¿Contiene spoilers?
+                    {{ 'bookDetail.containsSpoilersQuestion' | translate }}
                   </label>
                   @if (comentarioErrorPorResena()[mi.id]) {
                     <p class="comentario-error">{{ comentarioErrorPorResena()[mi.id] }}</p>
                   }
                   <button type="button" class="btn-comentar" [disabled]="enviandoComentario()[mi.id]" (click)="enviarComentario(mi.id)">
-                    {{ enviandoComentario()[mi.id] ? 'Enviando…' : 'Comentar' }}
+                    {{ enviandoComentario()[mi.id] ? ('profile.sending' | translate) : ('bookDetail.comment' | translate) }}
                   </button>
                 </div>
               </div>
@@ -229,13 +255,14 @@
         </article>
       }
 
+      <!-- Se muestra el formulario para crear una nueva reseña -->
       <div class="crear-resena-box">
-        <h4>{{ miResena() ? 'Edita tu reseña' : 'Deja tu reseña' }}</h4>
+        <h4>{{ miResena() ? ('bookDetail.editYourReview' | translate) : ('bookDetail.leaveYourReview' | translate) }}</h4>
         <div class="form-resena">
-          <input type="text" placeholder="Título de la reseña (opcional)" [(ngModel)]="resenaNuevaTitulo" />
-          <textarea placeholder="Escribe tu reseña..." [(ngModel)]="resenaNuevaContenido"></textarea>
+          <input type="text" [placeholder]="'bookDetail.reviewTitleOptional' | translate" [(ngModel)]="resenaNuevaTitulo" />
+          <textarea [placeholder]="'bookDetail.writeReviewPlaceholder' | translate" [(ngModel)]="resenaNuevaContenido"></textarea>
           <div class="calificacion-estrellas-wrap">
-            <span>Calificación (opcional):</span>
+            <span>{{ 'bookDetail.ratingOptional' | translate }}:</span>
             <div class="input-estrellas" (mouseleave)="clearHoverCalificacionResena()">
               @for (estrella of estrellasInput(); track estrella) {
                 <button
@@ -249,11 +276,11 @@
                 </button>
               }
             </div>
-            <button type="button" class="limpiar-calificacion-btn" (click)="seleccionarCalificacionResena(0)">Quitar nota</button>
+            <button type="button" class="limpiar-calificacion-btn" (click)="seleccionarCalificacionResena(0)">{{ 'bookDetail.clearRating' | translate }}</button>
           </div>
           <label class="spoiler-check">
             <input type="checkbox" [(ngModel)]="resenaNuevaSpoiler" />
-            Esta reseña contiene spoilers
+            {{ 'bookDetail.reviewContainsSpoilers' | translate }}
           </label>
           @if (crearResenaError()) {
             <p class="comentario-error">{{ crearResenaError() }}</p>
@@ -262,22 +289,24 @@
             <p class="ok-msg">{{ crearResenaOk() }}</p>
           }
           <button type="button" class="btn-comentar" [disabled]="creandoResena()" (click)="crearResena()">
-            {{ creandoResena() ? 'Guardando…' : (miResena() ? 'Guardar cambios' : 'Publicar reseña') }}
+            {{ creandoResena() ? ('bookDetail.saving' | translate) : (miResena() ? ('bookDetail.saveChanges' | translate) : ('bookDetail.publishReview' | translate)) }}
           </button>
         </div>
       </div>
 
+      <!-- Se muestra el panel de herramientas de las reseñas -->
       <div class="resenas-tools">
-        <input type="text" placeholder="Buscar en reseñas..." [(ngModel)]="textoResenas" (ngModelChange)="onBusquedaResenasChange()" />
+        <input type="text" [placeholder]="'bookDetail.searchInReviews' | translate" [(ngModel)]="textoResenas" (ngModelChange)="onBusquedaResenasChange()" />
         <select [(ngModel)]="filtroResenas" (change)="onFiltroResenasChange()">
-          <option value="fechaCreacion,desc">Más recientes</option>
-          <option value="fechaCreacion,asc">Más antiguas</option>
-          <option value="calificacion,desc">Mejor valoradas</option>
-          <option value="calificacion,asc">Peor valoradas</option>
+          <option value="fechaCreacion,desc">{{ 'bookDetail.sortNewest' | translate }}</option>
+          <option value="fechaCreacion,asc">{{ 'bookDetail.sortOldest' | translate }}</option>
+          <option value="calificacion,desc">{{ 'bookDetail.sortBestRated' | translate }}</option>
+          <option value="calificacion,asc">{{ 'bookDetail.sortWorstRated' | translate }}</option>
         </select>
       </div>
+      <!-- Se muestran las reseñas -->
       @if (cargandoResenas()) {
-        <p class="state-msg">Cargando reseñas…</p>
+        <p class="state-msg">{{ 'bookDetail.loadingReviews' | translate }}</p>
       } @else {
         @for (r of resenasSinMiResena(); track r.id) {
           <article class="resena-card">
@@ -296,13 +325,13 @@
               }
               @if (r.contieneSpoiler && !spoilerResenaVisible(r.id)) {
                 <div class="spoiler-box">
-                  <p class="spoiler-label">¡Esta reseña contiene spoilers!</p>
-                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">Mostrar reseña</button>
+                  <p class="spoiler-label">{{ 'bookDetail.thisReviewHasSpoilers' | translate }}</p>
+                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">{{ 'bookDetail.showReview' | translate }}</button>
                 </div>
               } @else {
                 <p>{{ r.contenido }}</p>
                 @if (r.contieneSpoiler) {
-                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">Ocultar reseña</button>
+                  <button type="button" class="spoiler-toggle-btn" (click)="toggleSpoilerResena(r.id)">{{ 'bookDetail.hideReview' | translate }}</button>
                 }
               }
               <div class="resena-acciones">
@@ -324,7 +353,7 @@
               @if (comentariosEstanAbiertos(r.id)) {
                 <div class="comentarios-box">
                   @if (cargandoComentarios()[r.id]) {
-                    <p class="comentario-estado">Cargando comentarios…</p>
+                    <p class="comentario-estado">{{ 'bookDetail.loadingComments' | translate }}</p>
                   } @else {
                     <div class="comentarios-lista">
                       @for (comentario of getComentariosResena(r.id); track comentario.id) {
@@ -332,13 +361,13 @@
                           <p class="comentario-autor">{{ comentario.usuarioNombre }}</p>
                           @if (comentario.contieneSpoiler && !spoilerComentarioVisible(r.id, comentario.id)) {
                             <div class="spoiler-box">
-                              <p class="spoiler-label">¡Comentario con spoiler!</p>
+                              <p class="spoiler-label">{{ 'bookDetail.commentHasSpoiler' | translate }}</p>
                               <button
                                 type="button"
                                 class="spoiler-toggle-btn"
                                 (click)="toggleSpoilerComentario(r.id, comentario.id)"
                               >
-                                Mostrar comentario
+                                {{ 'bookDetail.showComment' | translate }}
                               </button>
                             </div>
                           } @else {
@@ -349,20 +378,20 @@
                                 class="spoiler-toggle-btn"
                                 (click)="toggleSpoilerComentario(r.id, comentario.id)"
                               >
-                                Ocultar comentario
+                                {{ 'bookDetail.hideComment' | translate }}
                               </button>
                             }
                           }
                         </div>
                       } @empty {
-                        <p class="comentario-estado">Todavía no hay comentarios.</p>
+                        <p class="comentario-estado">{{ 'bookDetail.noCommentsYet' | translate }}</p>
                       }
                     </div>
                   }
 
                   <div class="comentario-form">
                     <textarea
-                      placeholder="Escribe un comentario..."
+                      [placeholder]="'bookDetail.writeCommentPlaceholder' | translate"
                       [ngModel]="getComentarioTexto(r.id)"
                       (ngModelChange)="setComentarioTexto(r.id, $event)"
                     ></textarea>
@@ -372,13 +401,13 @@
                         [ngModel]="getComentarioEsSpoiler(r.id)"
                         (ngModelChange)="setComentarioEsSpoiler(r.id, $event)"
                       />
-                      ¿Contiene spoilers?
+                      {{ 'bookDetail.containsSpoilersQuestion' | translate }}
                     </label>
                     @if (comentarioErrorPorResena()[r.id]) {
                       <p class="comentario-error">{{ comentarioErrorPorResena()[r.id] }}</p>
                     }
                     <button type="button" class="btn-comentar" [disabled]="enviandoComentario()[r.id]" (click)="enviarComentario(r.id)">
-                      {{ enviandoComentario()[r.id] ? 'Enviando…' : 'Comentar' }}
+                      {{ enviandoComentario()[r.id] ? ('profile.sending' | translate) : ('bookDetail.comment' | translate) }}
                     </button>
                   </div>
                 </div>
@@ -386,13 +415,14 @@
             </div>
           </article>
         } @empty {
-          <p class="state-msg">No hay reseñas con ese filtro.</p>
+          <p class="state-msg">{{ 'bookDetail.noReviewsWithFilter' | translate }}</p>
         }
       }
     </section>
 
+    <!-- Se muestra el panel de libros relacionados -->
     <section class="relacionados-panel">
-      <h3>Otros libros parecidos</h3>
+      <h3>{{ 'bookDetail.otherSimilarBooks' | translate }}</h3>
       <div class="grid-mini">
         @for (libro of det.otrosParecidos; track libro.id) {
           <a [routerLink]="['/libros', libro.id]" class="mini-card">
@@ -400,11 +430,12 @@
             <span>{{ libro.titulo }}</span>
           </a>
         } @empty {
-          <p class="muted">Sin sugerencias por ahora.</p>
+          <p class="muted">{{ 'bookDetail.noSuggestionsYet' | translate }}</p>
         }
       </div>
 
-      <h3>Otros libros del mismo autor</h3>
+      <!-- Se muestra el título de los libros del mismo autor -->
+      <h3>{{ 'bookDetail.otherBooksSameAuthor' | translate }}</h3>
       <div class="grid-mini">
         @for (libro of det.otrosMismoAutor; track libro.id) {
           <a [routerLink]="['/libros', libro.id]" class="mini-card">
@@ -412,34 +443,35 @@
             <span>{{ libro.titulo }}</span>
           </a>
         } @empty {
-          <p class="muted">No hay más libros del autor.</p>
+          <p class="muted">{{ 'bookDetail.noMoreAuthorBooks' | translate }}</p>
         }
       </div>
     </section>
   }
 
+  <!-- Se muestra el modal para agregar el libro a otra biblioteca -->
   @if (showAgregarModal()) {
     <div class="modal-backdrop" (click)="cerrarAgregarModal()">
       <div class="modal-card" (click)="$event.stopPropagation()">
-        <h3>Agregar a biblioteca</h3>
-        <label for="bibliotecaSelect">Biblioteca</label>
+        <h3>{{ 'bookDetail.addToLibrary' | translate }}</h3>
+        <label for="bibliotecaSelect">{{ 'libraries.title' | translate }}</label>
         <select id="bibliotecaSelect" [(ngModel)]="bibliotecaSeleccionadaId">
           @for (b of bibliotecas(); track b.id) {
             <option [ngValue]="b.id" [disabled]="bibliotecaTieneLibro(b)">
-              {{ b.nombre }}{{ bibliotecaTieneLibro(b) ? ' (ya añadido)' : '' }}
+              {{ b.nombre }}{{ bibliotecaTieneLibro(b) ? (' ' + ('bookDetail.alreadyAdded' | translate)) : '' }}
             </option>
           }
         </select>
         @if (!hayBibliotecasDisponibles()) {
-          <p class="state-msg">Este libro ya está en todas tus bibliotecas.</p>
+          <p class="state-msg">{{ 'bookDetail.alreadyInAllLibraries' | translate }}</p>
         }
         @if (agregarError()) {
           <p class="state-msg error">{{ agregarError() }}</p>
         }
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="cerrarAgregarModal()">Cancelar</button>
+          <button type="button" class="btn-secondary" (click)="cerrarAgregarModal()">{{ 'common.cancel' | translate }}</button>
           <button type="button" class="btn-primary" [disabled]="agregando() || !hayBibliotecasDisponibles()" (click)="agregarLibroABiblioteca()">
-            {{ agregando() ? 'Agregando…' : 'Agregar' }}
+            {{ agregando() ? ('bookDetail.adding' | translate) : ('bookDetail.add' | translate) }}
           </button>
         </div>
       </div>

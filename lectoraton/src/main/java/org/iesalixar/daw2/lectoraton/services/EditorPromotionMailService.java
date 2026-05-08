@@ -39,6 +39,12 @@ public class EditorPromotionMailService {
         this.tokenUtil = tokenUtil;
     }
 
+    /**
+     * Envia un correo de solicitud de rol Editor al administrador.
+     *
+     * @param solicitante Usuario que solicita el rol Editor.
+     * @throws IllegalStateException si el correo no está configurado.
+     */
     public void enviarSolicitud(Usuario solicitante) {
         JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
         if (mailSender == null || mailUsername == null || mailUsername.isBlank()) {
@@ -53,6 +59,16 @@ public class EditorPromotionMailService {
 
         String nombreCompleto = (solicitante.getNombre() + " " + solicitante.getApellidos()).trim();
 
+        /**
+         * Genera el HTML del correo de solicitud de rol Editor.
+         *
+         * @param solicitante Usuario que solicita el rol Editor.
+         * @param nombreCompleto Nombre completo del usuario.
+         * @param email Email del usuario.
+         * @param id Id del usuario.
+         * @param approveUrl URL de aprobación del rol Editor.
+         * @return HTML del correo de solicitud de rol Editor.
+         */
         String html = """
                 <!DOCTYPE html>
                 <html><head><meta charset="UTF-8"/></head>

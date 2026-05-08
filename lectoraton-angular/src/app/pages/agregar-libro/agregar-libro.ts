@@ -2,12 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LibroService } from '../../core/libro/libro.service';
 
 @Component({
   selector: 'app-agregar-libro',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, TranslatePipe],
   templateUrl: './agregar-libro.html',
   styleUrl: './agregar-libro.css',
 })
@@ -34,6 +35,7 @@ export class AgregarLibroPage implements OnInit {
   constructor(
     private readonly libroService: LibroService,
     private readonly router: Router,
+    private readonly translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +45,7 @@ export class AgregarLibroPage implements OnInit {
         this.loadingMeta.set(false);
       },
       error: () => {
-        this.error.set('No se pudieron cargar los autores.');
+        this.error.set(this.translate.instant('addBook.errorLoadAuthors'));
         this.loadingMeta.set(false);
       },
     });
@@ -67,15 +69,15 @@ export class AgregarLibroPage implements OnInit {
     this.error.set(null);
     const isbn = this.isbn.trim().replace(/[^0-9X]/gi, '');
     if (isbn.length !== 13) {
-      this.error.set('El ISBN debe tener 13 caracteres (solo dígitos, sin guiones).');
+      this.error.set(this.translate.instant('addBook.errorIsbn'));
       return;
     }
     if (!this.titulo.trim()) {
-      this.error.set('El título es obligatorio.');
+      this.error.set(this.translate.instant('addBook.errorTitleRequired'));
       return;
     }
     if (this.autorId == null || this.autorId <= 0) {
-      this.error.set('Selecciona un autor.');
+      this.error.set(this.translate.instant('addBook.errorAuthorRequired'));
       return;
     }
 
@@ -122,7 +124,9 @@ export class AgregarLibroPage implements OnInit {
         } else if (body?.message) {
           this.error.set(String(body.message));
         } else {
-          this.error.set(err.status === 403 ? 'No tienes permiso para crear libros.' : 'No se pudo crear el libro.');
+          this.error.set(
+            err.status === 403 ? this.translate.instant('addBook.errorNoPermission') : this.translate.instant('addBook.errorCreate'),
+          );
         }
       },
     });

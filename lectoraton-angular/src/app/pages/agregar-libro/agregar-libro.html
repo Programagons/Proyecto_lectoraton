@@ -1,10 +1,10 @@
 <div class="agregar-libro-page">
-  <p class="back"><a routerLink="/inicio">← Volver</a></p>
-  <h1>Agregar libro</h1>
-  <p class="sub">Los cambios quedarán visibles en Explorar y en el resto de la app.</p>
+  <p class="back"><a routerLink="/inicio">← {{ 'common.back' | translate }}</a></p>
+  <h1>{{ 'addBook.title' | translate }}</h1>
+  <p class="sub">{{ 'addBook.subtitle' | translate }}</p>
 
   @if (loadingMeta()) {
-    <p class="state-msg">Cargando datos…</p>
+    <p class="state-msg">{{ 'addBook.loadingData' | translate }}</p>
   } @else {
     @if (error()) {
       <p class="state-msg error" role="alert">{{ error() }}</p>
@@ -12,44 +12,44 @@
 
     <form class="form-libro" (ngSubmit)="enviar()">
       <label>
-        ISBN (13 dígitos)
+        {{ 'addBook.isbn' | translate }}
         <input type="text" [(ngModel)]="isbn" name="isbn" maxlength="17" required autocomplete="off" />
       </label>
       <label>
-        Título
+        {{ 'addBook.bookTitle' | translate }}
         <input type="text" [(ngModel)]="titulo" name="titulo" maxlength="200" required />
       </label>
       <label>
-        Saga (opcional)
+        {{ 'addBook.sagaOptional' | translate }}
         <input type="text" [(ngModel)]="sagaNombre" name="sagaNombre" maxlength="150" />
       </label>
       <label>
-        Número en saga
+        {{ 'addBook.sagaNumber' | translate }}
         <input type="number" [(ngModel)]="numeroSaga" name="numeroSaga" min="1" />
       </label>
       <label>
-        Sinopsis
+        {{ 'addBook.synopsis' | translate }}
         <textarea [(ngModel)]="sinopsis" name="sinopsis" rows="4"></textarea>
       </label>
       <label>
-        Autor
+        {{ 'common.author' | translate }}
         <select [(ngModel)]="autorId" name="autorId" required>
-          <option [ngValue]="null">— Elige autor —</option>
+          <option [ngValue]="null">— {{ 'addBook.chooseAuthor' | translate }} —</option>
           @for (a of autores; track a.id) {
             <option [ngValue]="a.id">{{ a.nombre_completo }}</option>
           }
         </select>
       </label>
       <label>
-        Páginas
+        {{ 'addBook.pages' | translate }}
         <input type="number" [(ngModel)]="numPaginas" name="numPaginas" min="1" />
       </label>
       <label>
-        Fecha publicación
+        {{ 'addBook.publishDate' | translate }}
         <input type="date" [(ngModel)]="fechaPublicacion" name="fechaPublicacion" />
       </label>
       <label>
-        Géneros (Ctrl+clic varios)
+        {{ 'addBook.genresMulti' | translate }}
         <select [(ngModel)]="generoIds" name="generoIds" multiple size="6">
           @for (g of generos; track g.id) {
             <option [ngValue]="g.id">{{ g.nombre }}</option>
@@ -57,7 +57,7 @@
         </select>
       </label>
       <label>
-        Tropos (Ctrl+clic varios)
+        {{ 'addBook.tropesMulti' | translate }}
         <select [(ngModel)]="tropoIds" name="tropoIdsSel" multiple size="6">
           @for (t of tropos; track t.id) {
             <option [ngValue]="t.id">{{ t.nombre }}</option>
@@ -65,12 +65,12 @@
         </select>
       </label>
       <label>
-        Portada (imagen, opcional)
+        {{ 'addBook.coverOptional' | translate }}
         <input type="file" accept="image/*" (change)="onPortadaChange($event)" />
       </label>
 
       <button type="submit" class="btn-submit" [disabled]="enviando()">
-        {{ enviando() ? 'Guardando…' : 'Guardar libro' }}
+        {{ enviando() ? ('addBook.saving' | translate) : ('addBook.saveBook' | translate) }}
       </button>
     </form>
   }

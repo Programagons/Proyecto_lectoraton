@@ -1,14 +1,17 @@
+/* Explorar page */
 .explorar-page {
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.3rem 1rem 3rem;
-  background: #f5eedd;
+  background: var(--color-beige-bg);
 }
 
+/* Explorar carruseles */
 .explorar-carruseles {
   margin-bottom: 1.35rem;
 }
 
+/* Carrusel estado */
 .carrusel-estado {
   text-align: center;
   color: #6f4f3a;
@@ -16,23 +19,27 @@
   margin: 0 0 1rem;
 }
 
+/* Bloque carrusel */
 .bloque-carrusel {
   margin-bottom: 1.5rem;
 }
 
+/* Bloque carrusel (segundo) */
 .bloque-carrusel--segundo {
   padding-top: 0.25rem;
   border-top: 1px solid rgba(139, 115, 85, 0.2);
 }
 
+/* Titulo carrusel */
 .titulo-carrusel {
   margin: 0 0 0.15rem;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: 2rem;
-  color: #5c4033;
+  color: var(--color-text);
   text-align: center;
 }
 
+/* Sub carrusel */
 .sub-carrusel {
   margin: 0 0 0.65rem;
   text-align: center;
@@ -40,6 +47,7 @@
   color: #8b5f45;
 }
 
+/* Carousel lectoraton */
 .carousel-lectoraton {
   border-radius: 12px;
   overflow: hidden;
@@ -47,11 +55,12 @@
   padding-bottom: 0.35rem;
 }
 
+/* Carousel inner */
 .carousel-lectoraton .carousel-inner {
   padding: 0.35rem 0 1.5rem;
 }
 
-/** Miniaturas fijas: evita que una sola portada devore el ancho de pantalla */
+/* Carrusel slide fila */
 .carrusel-slide-fila {
   display: flex;
   flex-wrap: wrap;
@@ -65,12 +74,14 @@
   box-sizing: border-box;
 }
 
+/* Carousel control prev */
 .carousel-lectoraton .carousel-control-prev,
 .carousel-lectoraton .carousel-control-next {
   width: 2.25rem;
   opacity: 0.85;
 }
 
+/* Carousel control prev icon */
 .carousel-lectoraton .carousel-control-prev-icon,
 .carousel-lectoraton .carousel-control-next-icon {
   filter: invert(28%) sepia(18%) saturate(900%) hue-rotate(330deg);
@@ -79,23 +90,26 @@
 }
 
 .carousel-lectoraton .carousel-indicators [type='button'] {
-  background-color: #ad7b59;
+  background-color: var(--color-button);
 }
 
+/* Carousel indicators active */
 .carousel-lectoraton .carousel-indicators .active {
-  background-color: #5c4033;
+  background-color: var(--color-text);
 }
 
+/* Carrusel libro card */
 .carrusel-libro-card {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  color: #5c4033;
+  color: var(--color-text);
   flex: 0 0 auto;
   width: clamp(100px, 22vw, 128px);
   max-width: 128px;
 }
 
+/* Carrusel portada */
 .carrusel-portada {
   width: 100%;
   height: auto;
@@ -106,6 +120,7 @@
   box-shadow: 0 4px 14px rgba(60, 42, 28, 0.18);
 }
 
+/* Carrusel titulo */
 .carrusel-titulo {
   margin-top: 0.4rem;
   font-weight: 700;
@@ -117,12 +132,14 @@
   overflow: hidden;
 }
 
+/* Carrusel autor */
 .carrusel-autor {
   font-size: 0.78rem;
   color: #8b5f45;
   margin-top: 0.12rem;
 }
 
+/* Explorar panel */
 .explorar-panel {
   background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
   border-radius: 16px;
@@ -130,14 +147,16 @@
   padding: 1rem;
 }
 
+/* Titulo explorar */
 h1 {
   margin: 0 0 0.8rem;
   text-align: center;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: clamp(2rem, 5vw, 2.8rem);
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Filtros */
 .filtros {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -145,15 +164,17 @@ h1 {
   margin-bottom: 0.9rem;
 }
 
+/* Filtros input */
 .filtros input,
 .filtros select {
   border: none;
-  border-radius: 999px;
-  background: #e3c7a1;
-  color: #5c4033;
+  border-radius: var(--radius-pill);
+  background: var(--color-input);
+  color: var(--color-text);
   padding: 0.55rem 0.85rem;
 }
 
+/* Acciones */
 .acciones {
   grid-column: 1 / -1;
   display: flex;
@@ -161,41 +182,48 @@ h1 {
   gap: 0.45rem;
 }
 
+/* Btn */
 .btn {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.95rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Btn buscar */
 .btn.buscar {
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
 }
 
+/* Btn limpiar */
 .btn.limpiar {
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Grid libros */
 .grid-libros {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0.75rem;
 }
 
+/* Load more wrap */
 .load-more-wrap {
   margin-top: 1rem;
   display: flex;
   justify-content: center;
 }
 
+/* Libro card */
 .libro-card {
   text-decoration: none;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Libro card img */
 .libro-card img {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -203,16 +231,19 @@ h1 {
   display: block;
 }
 
+/* Libro card h2 */
 .libro-card h2 {
   margin: 0.35rem 0 0;
   font-size: 0.95rem;
 }
 
+/* Libro card p */
 .libro-card p {
   margin: 0.15rem 0 0;
   font-size: 0.82rem;
 }
 
+/* Saga */
 .saga {
   display: block;
   margin-top: 0.15rem;
@@ -220,15 +251,18 @@ h1 {
   color: #8b5f45;
 }
 
+/* State msg */
 .state-msg {
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* State msg error */
 .state-msg.error {
   color: #6b2c2c;
 }
 
+/* Media query para pantallas pequeñas */
 @media (max-width: 700px) {
   .filtros {
     grid-template-columns: 1fr;

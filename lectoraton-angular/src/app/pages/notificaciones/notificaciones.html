@@ -1,7 +1,7 @@
 <section class="notificaciones-page">
-  <h1>Notificaciones</h1>
+  <h1>{{ 'notifications.title' | translate }}</h1>
   @if (loading()) {
-    <p class="nota">Cargando notificaciones…</p>
+    <p class="nota">{{ 'notifications.loading' | translate }}</p>
   } @else if (error()) {
     <p class="nota error">{{ error() }}</p>
   } @else {
@@ -11,7 +11,7 @@
           <p>{{ item.mensaje }}</p>
         </article>
       } @empty {
-        <p class="nota">No tienes notificaciones por ahora.</p>
+        <p class="nota">{{ 'notifications.empty' | translate }}</p>
       }
     </div>
   }

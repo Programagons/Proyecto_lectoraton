@@ -3,13 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environments';
 
+// Clave de almacenamiento para el token JWT.
 const STORAGE_KEY = 'lectoraton_token';
 
+// Interfaz para la respuesta de autenticación.
 export interface AuthResponse {
   token: string | null;
   message: string;
 }
 
+// Interfaz para el payload de registro.
 export interface RegisterRequest {
   username: string;
   password: string;
@@ -18,6 +21,7 @@ export interface RegisterRequest {
   email: string;
 }
 
+// Lectura local del payload JWT para UI/guards.
 function parseJwtPayload(token: string): Record<string, unknown> | null {
   try {
     const part = token.split('.')[1];
@@ -29,13 +33,15 @@ function parseJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
+// Servicio de autenticación global.
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly token = signal<string | null>(this.readTokenFromStorage());
 
+  // Computed: indica si el usuario está autenticado.
   readonly isLoggedIn = computed(() => !!this.token());
 
-  /** Roles tal como vienen en el JWT (coherentes tras iniciar sesión de nuevo). */
+  // Computed: roles del usuario desde el token JWT.
   readonly jwtRoles = computed(() => {
     const t = this.token();
     if (!t) {
@@ -45,6 +51,7 @@ export class AuthService {
     return Array.isArray(r) ? r.filter((x): x is string => typeof x === 'string') : [];
   });
 
+  // Computed: indica si el usuario puede publicar libros.
   readonly canPublishBooks = computed(() => {
     const r = this.jwtRoles();
     return r.includes('Editor') || r.includes('Admin');
@@ -52,10 +59,12 @@ export class AuthService {
 
   constructor(private readonly http: HttpClient) {}
 
+  // Lee el token del almacenamiento local o sesión.
   private readTokenFromStorage(): string | null {
     return localStorage.getItem(STORAGE_KEY) ?? sessionStorage.getItem(STORAGE_KEY);
   }
 
+  // Persiste el token en el almacenamiento local o sesión.
   private persistToken(token: string, remember: boolean): void {
     localStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(STORAGE_KEY);
@@ -66,10 +75,12 @@ export class AuthService {
     }
   }
 
+  // Obtiene el token actual.
   getToken(): string | null {
     return this.token();
   }
 
+  // Obtiene el nombre de usuario del token.
   getUsername(): string | null {
     const t = this.token();
     if (!t) {
@@ -79,6 +90,7 @@ export class AuthService {
     return typeof sub === 'string' ? sub : null;
   }
 
+  // Obtiene el ID del usuario del token.
   getUserId(): number | null {
     const t = this.token();
     if (!t) {
@@ -88,7 +100,6 @@ export class AuthService {
     return typeof id === 'number' ? id : null;
   }
 
-  /** Persiste JWT devuelto por OAuth2 backend (fragmento tras login Google). */
   applyBackendJwt(token: string, rememberMe = true): void {
     if (!token) {
       return;
@@ -97,6 +108,7 @@ export class AuthService {
     this.token.set(token);
   }
 
+  // Al hacer login, se guarda JWT y se actualiza el estado reactivo de sesión.
   login(username: string, password: string, rememberMe: boolean): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${environment.apiUrl}/v1/authenticate`, { username, password })
@@ -110,10 +122,12 @@ export class AuthService {
       );
   }
 
+  // Registro de nuevo usuario.
   register(payload: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/v1/register`, payload);
   }
 
+  // Cierre de sesión: limpia el token y los almacenes.
   logout(): void {
     localStorage.removeItem(STORAGE_KEY);
     sessionStorage.removeItem(STORAGE_KEY);

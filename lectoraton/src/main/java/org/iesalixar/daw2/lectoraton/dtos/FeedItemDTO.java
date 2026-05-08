@@ -22,4 +22,5 @@ public class FeedItemDTO {
     private Integer libroNumPaginas;
     private Long resenaId;
     private String texto;
+    private Boolean contieneSpoiler;
 }

@@ -1,23 +1,23 @@
 <section class="inicio-page">
   <header class="inicio-top">
     <div class="inicio-titulos">
-      <h1>Inicio</h1>
-      <p class="subtitulo">Actividad de las personas que sigues</p>
+      <h1>{{ 'inicio.title' | translate }}</h1>
+      <p class="subtitulo">{{ 'inicio.subtitle' | translate }}</p>
     </div>
 
     <label class="toggle-propias">
       <input type="checkbox" name="incluirPropias" [(ngModel)]="incluirPropias" (change)="onCambiarFiltroPropias()" />
       <span class="toggle-propias-track" aria-hidden="true"></span>
-      <span class="toggle-propias-text">Incluir mi actividad</span>
+      <span class="toggle-propias-text">{{ 'inicio.includeMyActivity' | translate }}</span>
     </label>
   </header>
 
   <div class="inicio-layout">
-    <aside class="sidebar-ultima" aria-label="Tu última lectura actualizada">
-      <p class="sidebar-heading">Última actualización</p>
+    <aside class="sidebar-ultima" [attr.aria-label]="'inicio.ariaLatestProgress' | translate">
+      <p class="sidebar-heading">{{ 'inicio.latestUpdate' | translate }}</p>
 
       @if (cargandoUltimo()) {
-        <p class="sidebar-placeholder">Cargando…</p>
+        <p class="sidebar-placeholder">{{ 'common.loading' | translate }}</p>
       } @else if (ultimoProgreso(); as u) {
         <a [routerLink]="['/libros', u.libroId]" fragment="bloque-progreso" class="sidebar-cover-wrap">
           <img class="sidebar-cover" [src]="u.portada || ''" [alt]="'Portada de ' + u.titulo" />
@@ -25,17 +25,17 @@
         <div class="barra sidebar-bar" role="progressbar" [attr.aria-valuenow]="clampPct(u.porcentaje)" aria-valuemin="0" aria-valuemax="100">
           <div class="relleno" [style.width.%]="clampPct(u.porcentaje)"></div>
         </div>
-        <p class="sidebar-stats">{{ u.paginaActual }} / {{ u.paginasTotales ?? '?' }} págs · {{ u.porcentaje.toFixed(1) }} %</p>
-        <a [routerLink]="['/libros', u.libroId]" fragment="bloque-progreso" class="btn-actualizar-progreso">Actualizar progreso</a>
+        <p class="sidebar-stats">{{ u.paginaActual }} / {{ u.paginasTotales ?? '?' }} {{ 'inicio.pagesAbbrev' | translate }} · {{ u.porcentaje.toFixed(1) }} %</p>
+        <a [routerLink]="['/libros', u.libroId]" fragment="bloque-progreso" class="btn-actualizar-progreso">{{ 'inicio.updateProgress' | translate }}</a>
       } @else {
-        <p class="sidebar-placeholder">Cuando guardes el progreso de un libro, aparecerá aquí para retomarlo rápido.</p>
-        <a routerLink="/explorar" class="btn-actualizar-progreso btn-actualizar-progreso--ghost">Explorar libros</a>
+        <p class="sidebar-placeholder">{{ 'inicio.emptyLatest' | translate }}</p>
+        <a routerLink="/explorar" class="btn-actualizar-progreso btn-actualizar-progreso--ghost">{{ 'header.explore' | translate }}</a>
       }
     </aside>
 
     <div class="feed-column">
       @if (loading()) {
-        <p class="nota">Cargando actividad…</p>
+        <p class="nota">{{ 'inicio.loadingFeed' | translate }}</p>
       } @else if (error()) {
         <p class="nota error">{{ error() }}</p>
       } @else {
@@ -65,18 +65,32 @@
                           [class.b-progreso]="item.tipo === 'PROGRESO'"
                           [class.b-comentario]="item.tipo === 'COMENTARIO'"
                         >
-                          {{ etiquetaTipo(item.tipo) }}
+                          {{ etiquetaTipo(item.tipo) | translate }}
                         </span>
                         <span class="fecha">{{ item.fechaCreacion | date: 'short' }}</span>
                       </p>
                     </div>
                   </div>
                   @if (item.texto) {
-                    <p class="texto-feed">{{ item.texto }}</p>
+                    @if (item.tipo === 'COMENTARIO' && item.contieneSpoiler && !spoilerVisible(item.id)) {
+                      <div class="spoiler-feed-box">
+                        <p class="spoiler-feed-label">{{ 'inicio.spoilerWarning' | translate }}</p>
+                        <button type="button" class="spoiler-feed-btn" (click)="toggleSpoiler(item.id)">
+                          {{ 'inicio.showSpoiler' | translate }}
+                        </button>
+                      </div>
+                    } @else {
+                      <p class="texto-feed">{{ item.texto }}</p>
+                      @if (item.tipo === 'COMENTARIO' && item.contieneSpoiler) {
+                        <button type="button" class="spoiler-feed-btn" (click)="toggleSpoiler(item.id)">
+                          {{ 'inicio.hideSpoiler' | translate }}
+                        </button>
+                      }
+                    }
                   }
                   @if (item.libroId) {
                     <div class="feed-links">
-                      <a [routerLink]="['/libros', item.libroId]" class="link-libro">Ver libro</a>
+                      <a [routerLink]="['/libros', item.libroId]" class="link-libro">{{ 'common.viewBook' | translate }}</a>
                       @if (item.libroTitulo) {
                         <span class="titulo-libro-chip">{{ item.libroTitulo }}</span>
                       }
@@ -100,13 +114,13 @@
               </div>
             </article>
           } @empty {
-            <p class="nota">No hay actividad reciente. Sigue a más lectores en Comunidad o publica una reseña.</p>
+            <p class="nota">{{ 'inicio.emptyFeed' | translate }}</p>
           }
         </div>
         @if (hayMas()) {
           <div class="mas-wrap">
             <button type="button" class="btn-mas" [disabled]="cargandoMas()" (click)="cargarMas()">
-              {{ cargandoMas() ? 'Cargando…' : 'Cargar más' }}
+              {{ cargandoMas() ? ('common.loading' | translate) : ('common.loadMore' | translate) }}
             </button>
           </div>
         }

@@ -1,10 +1,12 @@
+/* Página de detalle del libro */
 .libro-page {
   max-width: 930px;
   margin: 0 auto;
   padding: 1.3rem 1rem 3rem;
-  background: #f5eedd;
+  background: var(--color-beige-bg);
 }
 
+/* Ficha del libro */
 .ficha-libro {
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -15,11 +17,13 @@
   padding: 1.05rem;
 }
 
+/* Columna de la portada */
 .portada-col {
   display: flex;
   flex-direction: column;
 }
 
+/* Portada principal */
 .portada-principal {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -27,10 +31,12 @@
   display: block;
 }
 
+/* Acciones de la portada */
 .portada-acciones {
   margin-top: 0.55rem;
 }
 
+/* Media de la portada */
 .media-portada {
   margin-top: 0.55rem;
   text-align: center;
@@ -39,39 +45,45 @@
   padding: 0.45rem 0.5rem;
 }
 
+/* Texto de la media de la portada */
 .media-portada p {
   margin: 0.22rem 0 0;
   color: #5c4033;
 }
 
+/* Botón para agregar el libro a otra biblioteca */
 .btn-agregar {
   width: 100%;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.55rem 0.9rem;
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Botón para agregar el libro a otra biblioteca (suave) */
 .btn-agregar.soft {
   background: #c9a789;
   color: #fff;
 }
 
+/* Botón para agregar el libro a otra biblioteca (deshabilitado) */
 .btn-agregar:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
+/* Enlace para volver a la página anterior */
 .link-back {
-  color: #ad7b59;
+  color: var(--color-button);
   text-decoration: underline;
   text-underline-offset: 3px;
   font-size: 0.92rem;
 }
 
+/* Referencia a la saga del libro */
 .saga-ref {
   margin: 0.28rem 0 0;
   color: #8b5f45;
@@ -79,12 +91,14 @@
   font-weight: 600;
 }
 
+/* Título del libro */
 .titulo-libro {
   margin: 0.06rem 0;
-  color: #5c4033;
+  color: var(--color-text);
   font-size: clamp(2rem, 4.4vw, 2.9rem);
 }
 
+/* Autor del libro */
 .autor-libro {
   margin: 0 0 0.4rem;
   color: #6f4f3a;
@@ -92,12 +106,14 @@
   font-weight: 700;
 }
 
+/* Sinopsis del libro */
 .sinopsis {
   line-height: 1.58;
   color: #4f3a2d;
   margin: 0 0 0.7rem;
 }
 
+/* Línea de metadatos */
 .meta-line {
   color: #4f3a2d;
   margin-bottom: 0.28rem;
@@ -105,6 +121,17 @@
   padding-top: 0.36rem;
 }
 
+:root[data-theme='dark'] .sinopsis {
+  color: #fff6eb;
+  font-weight: 500;
+}
+
+:root[data-theme='dark'] .meta-line {
+  color: #f6e8d8;
+  border-top-color: rgba(246, 232, 216, 0.34);
+}
+
+/* Paneles de resumen, progreso, reseñas y libros relacionados */
 .panel-resumen,
 .panel-progreso,
 .resenas-panel,
@@ -116,35 +143,41 @@
   padding: 0.9rem 0.95rem;
 }
 
+/* Título del panel de progreso */
 .panel-progreso h3 {
   margin: 0 0 0.5rem;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: 2.1rem;
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Meta de progreso */
 .progreso-meta {
   margin: 0 0 0.55rem;
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
+/* Separador de la meta de progreso */
 .progreso-meta .sep {
   margin: 0 0.35rem;
   opacity: 0.55;
 }
 
+/* Barra de progreso de lectura */
 .barra-progreso-lectura {
   height: 12px;
   margin-bottom: 0.85rem;
 }
 
+/* Relleno de la barra de progreso de lectura */
 .barra-progreso-lectura .relleno {
   background: linear-gradient(90deg, #8b9a6b, #ad7b59);
 }
 
+/* Formulario de progreso */
 .progreso-form {
   display: flex;
   flex-wrap: wrap;
@@ -153,6 +186,7 @@
   justify-content: center;
 }
 
+/* Label de progreso */
 .progreso-label {
   display: flex;
   flex-direction: column;
@@ -162,6 +196,7 @@
   color: #4f3a2d;
 }
 
+/* Input de página y select de estado */
 .input-pagina,
 .select-estado {
   padding: 0.4rem 0.5rem;
@@ -170,17 +205,20 @@
   background: rgba(255, 255, 255, 0.75);
 }
 
+/* Input de página */
 .input-pagina {
   width: 6.5rem;
 }
 
+/* Select de estado */
 .select-estado {
   min-width: 12.5rem;
 }
 
+/* Botón para guardar el progreso */
 .btn-guardar-progreso {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 1.1rem;
   background: #6b7c4a;
   color: #fff;
@@ -188,42 +226,50 @@
   cursor: pointer;
 }
 
+/* Botón para guardar el progreso (deshabilitado) */
 .btn-guardar-progreso:disabled {
   opacity: 0.65;
   cursor: not-allowed;
 }
 
+/* Feedback de progreso */
 .progreso-feedback {
   margin: 0.65rem 0 0;
   text-align: center;
   font-size: 0.9rem;
 }
 
+/* Feedback de progreso (error) */
 .progreso-feedback.error {
   color: #a33;
 }
 
+/* Feedback de progreso (ok) */
 .progreso-feedback.ok {
   color: #3d6b2e;
 }
 
+/* Metrica de amigos */
 .metrica-amigos {
   background: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
   padding: 0.6rem;
 }
 
+/* Estrellas */
 .stars {
   color: #e9a03d;
   font-weight: 700;
 }
 
+/* Lista de amigos */
 .amigos-list {
   display: flex;
   gap: 0.4rem;
   align-items: center;
 }
 
+/* Item de amigo */
 .amigo-item {
   width: 32px;
   height: 32px;
@@ -236,39 +282,45 @@
   font-size: 0.85rem;
 }
 
+/* Imagen de amigo */
 .amigo-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Resumen de reseñas */
 .resumen-resenas {
   border-top: 1px solid rgba(139, 115, 85, 0.2);
   padding-top: 0.8rem;
 }
 
+/* Título de los paneles de reseñas y libros relacionados */
 .resumen-resenas h3,
 .resenas-panel h3,
 .relacionados-panel h3 {
   margin: 0 0 0.65rem;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: 2.1rem;
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Nota de información */
 .resumen-nota-info {
   margin: 0 0 0.6rem;
   color: #6f4f3a;
   text-align: center;
 }
 
+/* Contador de reseñas */
 .resenas-count {
   font-size: 1.25rem;
   color: #8b5f45;
   font-weight: 600;
 }
 
+/* Barra de progreso */
 .barra-row {
   display: grid;
   grid-template-columns: 38px 1fr 32px;
@@ -277,6 +329,7 @@
   margin-bottom: 0.35rem;
 }
 
+/* Barra de progreso */
 .barra {
   height: 10px;
   background: #e6d7c3;
@@ -284,11 +337,13 @@
   overflow: hidden;
 }
 
+/* Relleno de la barra de progreso */
 .relleno {
   height: 100%;
   background: #c69a6d;
 }
 
+/* Herramientas de las reseñas */
 .resenas-tools {
   display: grid;
   grid-template-columns: 1fr 190px;
@@ -296,6 +351,7 @@
   margin-bottom: 0.7rem;
 }
 
+/* Box para crear una reseña */
 .crear-resena-box {
   background: rgba(255, 255, 255, 0.35);
   border-radius: 12px;
@@ -303,11 +359,13 @@
   margin-bottom: 0.8rem;
 }
 
+/* Título del box para crear una reseña */
 .crear-resena-box h4 {
   margin: 0 0 0.55rem;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Fila simple */
 .fila-simple {
   display: flex;
   flex-wrap: wrap;
@@ -316,11 +374,13 @@
   margin-bottom: 0.5rem;
 }
 
+/* Label de la fila simple */
 .fila-simple label {
-  color: #5c4033;
+  color: var(--color-text);
   font-weight: 700;
 }
 
+/* Select y inputs de la fila simple */
 .fila-simple select,
 .form-resena input,
 .form-resena textarea {
@@ -332,6 +392,7 @@
   font: inherit;
 }
 
+/* Textarea de la reseña */
 .form-resena textarea {
   width: 100%;
   min-height: 88px;
@@ -339,27 +400,32 @@
   box-sizing: border-box;
 }
 
+/* Input de la reseña */
 .form-resena input {
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 0.45rem;
 }
 
+/* Wrap de la calificación de estrellas */
 .calificacion-estrellas-wrap {
   margin-bottom: 0.55rem;
 }
 
+/* Span de la calificación de estrellas */
 .calificacion-estrellas-wrap > span {
-  color: #5c4033;
+  color: var(--color-text);
   font-weight: 700;
 }
 
+/* Input de estrellas */
 .input-estrellas {
   display: flex;
   gap: 0.2rem;
   margin-top: 0.25rem;
 }
 
+/* Botón de estrella */
 .star-input-btn {
   border: none;
   background: transparent;
@@ -370,35 +436,40 @@
   padding: 0;
 }
 
+/* Botón de estrella activo */
 .star-input-btn.active {
   color: #e9a03d;
 }
 
+/* Botón para limpiar la calificación */
 .limpiar-calificacion-btn {
   margin-top: 0.35rem;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
   padding: 0.35rem 0.7rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Mensaje de éxito */
 .ok-msg {
   color: #2d6a3f;
   margin: 0.2rem 0 0.45rem;
 }
 
+/* Input y select de la reseña */
 .resenas-panel input,
 .resenas-tools select {
   border: none;
-  border-radius: 999px;
-  background: #e3c7a1;
-  color: #5c4033;
+  border-radius: var(--radius-pill);
+  background: var(--color-input);
+  color: var(--color-text);
   padding: 0.55rem 0.85rem;
 }
 
+/* Card de la reseña */
 .resena-card {
   display: grid;
   grid-template-columns: 54px 1fr;
@@ -410,11 +481,13 @@
   margin-bottom: 0.55rem;
 }
 
+/* Card de la reseña propia */
 .mi-resena-card {
   border: 2px solid rgba(92, 64, 51, 0.45);
   background: #d1a06f;
 }
 
+/* Avatar */
 .avatar {
   width: 54px;
   height: 54px;
@@ -426,34 +499,40 @@
   justify-content: center;
 }
 
+/* Imagen del avatar */
 .avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Autor */
 .autor {
   margin: 0;
   font-weight: 700;
   color: #2e2319;
 }
 
+/* Contenido */
 .contenido p {
   margin: 0.2rem 0;
   color: #2e2319;
 }
 
+/* Título de la reseña */
 .resena-titulo {
   font-weight: 700;
   margin-top: 0.2rem;
 }
 
+/* Acciones de la reseña */
 .resena-acciones {
   display: flex;
   gap: 0.55rem;
   margin-top: 0.7rem;
 }
 
+/* Botón de acción */
 .accion-btn {
   display: inline-flex;
   align-items: center;
@@ -467,20 +546,24 @@
   font-weight: 700;
 }
 
+/* Botón de acción activo */
 .accion-btn.active {
   background: #f1d0cf;
   color: #8b2f3d;
 }
 
+/* Botón de acción de peligro */
 .accion-btn.danger-btn {
   background: rgba(139, 47, 61, 0.2);
   color: #6c2330;
 }
 
+/* Icono */
 .icono {
   line-height: 1;
 }
 
+/* Box de comentarios */
 .comentarios-box {
   margin-top: 0.8rem;
   background: rgba(255, 248, 240, 0.42);
@@ -488,30 +571,36 @@
   padding: 0.7rem;
 }
 
+/* Lista de comentarios */
 .comentarios-lista {
   display: grid;
   gap: 0.45rem;
 }
 
+/* Item de comentario */
 .comentario-item {
   background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
   padding: 0.5rem 0.65rem;
 }
 
+/* Autor del comentario */
 .comentario-autor {
   font-weight: 700;
 }
 
+/* Texto y estado del comentario */
 .comentario-texto,
 .comentario-estado {
   color: #3d2a1c;
 }
 
+/* Formulario de comentario */
 .comentario-form {
   margin-top: 0.7rem;
 }
 
+/* Box de spoiler */
 .spoiler-box {
   margin-top: 0.4rem;
   background: rgba(92, 64, 51, 0.09);
@@ -520,22 +609,25 @@
   padding: 0.55rem 0.65rem;
 }
 
+/* Label de spoiler */
 .spoiler-label {
   margin: 0 0 0.35rem;
-  color: #5c4033;
+  color: var(--color-text);
   font-weight: 700;
 }
 
+/* Botón de toggle de spoiler */
 .spoiler-toggle-btn {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
   padding: 0.4rem 0.75rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Textarea de comentario */
 .comentario-form textarea {
   width: 100%;
   min-height: 78px;
@@ -549,6 +641,7 @@
   box-sizing: border-box;
 }
 
+/* Check de spoiler */
 .spoiler-check {
   margin-top: 0.5rem;
   display: inline-flex;
@@ -557,27 +650,31 @@
   color: #4b3427;
 }
 
+/* Error de comentario */
 .comentario-error {
   color: #6b2c2c;
   margin: 0.4rem 0 0;
 }
 
+/* Botón de comentar */
 .btn-comentar {
   margin-top: 0.55rem;
   border: none;
-  border-radius: 999px;
-  background: #ad7b59;
+  border-radius: var(--radius-pill);
+  background: var(--color-button);
   color: #fff;
   padding: 0.48rem 0.9rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Botón de comentar (deshabilitado) */
 .btn-comentar:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
+/* Grid de mini libros */
 .grid-mini {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -585,16 +682,19 @@
   margin-bottom: 0.9rem;
 }
 
+/* Mini card */
 .mini-card {
   text-decoration: none;
-  color: #5c4033;
+  color: var(--color-text);
   transition: transform 0.14s;
 }
 
+/* Mini card (hover) */
 .mini-card:hover {
   transform: translateY(-2px);
 }
 
+/* Imagen de mini card */
 .mini-card img {
   width: 100%;
   aspect-ratio: 2 / 3;
@@ -602,25 +702,30 @@
   display: block;
 }
 
+/* Span de mini card */
 .mini-card span {
   display: block;
   margin-top: 0.25rem;
   font-size: 0.86rem;
 }
 
+/* Texto muted */
 .muted {
   color: #7a5a44;
 }
 
+/* Estado de mensaje */
 .state-msg {
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Estado de mensaje (error) */
 .state-msg.error {
   color: #6b2c2c;
 }
 
+/* Modal backdrop */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -631,6 +736,7 @@
   z-index: 1300;
 }
 
+/* Modal card */
 .modal-card {
   width: min(430px, 95vw);
   background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
@@ -639,15 +745,17 @@
   padding: 1rem;
 }
 
+/* Select de modal card */
 .modal-card select {
   width: 100%;
   border: none;
   border-radius: 12px;
-  background: #e3c7a1;
-  color: #5c4033;
+  background: var(--color-input);
+  color: var(--color-text);
   padding: 0.6rem 0.8rem;
 }
 
+/* Acciones de modal */
 .modal-actions {
   margin-top: 0.8rem;
   display: flex;
@@ -655,25 +763,29 @@
   gap: 0.45rem;
 }
 
+/* Botón primario y secundario */
 .btn-primary,
 .btn-secondary {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.9rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Botón primario */
 .btn-primary {
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
 }
 
+/* Botón secundario */
 .btn-secondary {
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Media query para pantallas pequeñas */
 @media (max-width: 760px) {
   .ficha-libro {
     grid-template-columns: 1fr;

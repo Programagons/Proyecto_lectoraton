@@ -4,7 +4,7 @@
   padding: 1.5rem 1rem 3rem;
   min-height: calc(100vh - 120px);
   box-sizing: border-box;
-  background: #f5eedd;
+  background: var(--color-beige-bg);
 }
 
 .detalle-panel {
@@ -29,13 +29,13 @@
 .detalle-cabecera h1 {
   margin: 0.55rem 0 0;
   text-align: center;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: clamp(2rem, 5vw, 2.7rem);
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .link-back {
-  color: #ad7b59;
+  color: var(--color-button);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -47,9 +47,9 @@
 
 .btn-selector {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.95rem;
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
@@ -105,7 +105,7 @@
 .libro-card h2 {
   margin: 0.1rem 0 0;
   font-size: 0.97rem;
-  color: #5c4033;
+  color: var(--color-text);
   text-align: center;
 }
 
@@ -118,7 +118,7 @@
 
 .state-msg {
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .state-msg.error {
@@ -145,7 +145,7 @@
 
 .selector-panel h2 {
   margin: 0;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .selector-panel p {
@@ -161,7 +161,7 @@
 
 .selector-item {
   text-decoration: none;
-  color: #5c4033;
+  color: var(--color-text);
   background: rgba(255, 255, 255, 0.46);
   border: 1px solid rgba(139, 115, 85, 0.28);
   border-radius: 10px;
@@ -170,7 +170,7 @@
 }
 
 .selector-item.activa {
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
-  border-color: #ad7b59;
+  border-color: var(--color-button);
 }

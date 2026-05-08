@@ -13,25 +13,27 @@
 
   <div class="bibliotecas-panel">
     @if (loading()) {
-      <p class="state-msg">Cargando…</p>
+      <p class="state-msg">{{ 'common.loading' | translate }}</p>
     } @else if (error()) {
       <p class="state-msg error" role="alert">{{ error() }}</p>
-      <a routerLink="/" class="link-back">Volver al inicio de sesión</a>
+      <a routerLink="/" class="link-back">{{ 'libraries.backToLogin' | translate }}</a>
     } @else if (items().length === 0) {
-      <p class="state-msg">Aún no tienes bibliotecas.</p>
-      <a routerLink="/inicio" class="link-back">Ir al inicio</a>
+      <p class="state-msg">{{ 'libraries.empty' | translate }}</p>
+      <a routerLink="/inicio" class="link-back">{{ 'common.backHome' | translate }}</a>
     } @else {
-      <h1 class="titulo-estanteria">Bibliotecas</h1>
+      <h1 class="titulo-estanteria">{{ 'libraries.title' | translate }}</h1>
       <div class="acciones-panel">
-        <button type="button" class="btn-crear" (click)="abrirModalCrear()">+ Nueva biblioteca</button>
+        <button type="button" class="btn-crear" (click)="abrirModalCrear()">+ {{ 'libraries.newLibrary' | translate }}</button>
       </div>
 
       <div class="estanterias">
+        <!-- Filas estante -->
         @for (fila of filasEstante(); track $index) {
           <div class="estante-fila">
             <div class="libros-en-estante">
+              <!-- Columnas libros en estante -->
               @for (b of fila; track b.id) {
-                <a class="columna-libro" [routerLink]="['/bibliotecas', b.id]" [attr.aria-label]="'Abrir biblioteca ' + b.nombre">
+                <a class="columna-libro" [routerLink]="['/bibliotecas', b.id]" [attr.aria-label]="('libraries.openLibrary' | translate) + ' ' + b.nombre">
                   <span class="nombre-biblioteca">{{ b.nombre }}</span>
                   <div class="portada-wrap">
                     @if (b.ultimaPortada) {
@@ -42,21 +44,25 @@
                         loading="lazy"
                       />
                     } @else {
+                      <!-- Portada placeholder -->
                       <div class="portada-placeholder">
-                        <span class="placeholder-text">Sin libros</span>
+                        <span class="placeholder-text">{{ 'libraries.noBooks' | translate }}</span>
                       </div>
                     }
                   </div>
                   <div class="acciones-biblioteca">
-                    <button type="button" class="accion-btn" (click)="abrirModalRenombrar(b, $event)">Editar</button>
+                    <!-- Btn editar -->
+                    <button type="button" class="accion-btn" (click)="abrirModalRenombrar(b, $event)">{{ 'common.edit' | translate }}</button>
                     @if (!esBibliotecaFija(b.nombre)) {
-                      <button type="button" class="accion-btn danger" (click)="abrirModalEliminar(b, $event)">Eliminar</button>
+                      <!-- Btn eliminar -->
+                      <button type="button" class="accion-btn danger" (click)="abrirModalEliminar(b, $event)">{{ 'common.delete' | translate }}</button>
                     }
                   </div>
                 </a>
               }
             </div>
             <div class="tabla-madera">
+              <!-- Tabla madera -->
               <div class="tabla-superficie"></div>
               <div class="tabla-soportes">
                 <span class="soporte"></span>
@@ -72,60 +78,62 @@
   @if (showCreateModal()) {
     <div class="modal-backdrop" (click)="cerrarModalCrear()">
       <div class="modal-card" (click)="$event.stopPropagation()">
-        <h2>Crear biblioteca</h2>
-        <p>Escribe un nombre rápido para tu nueva biblioteca.</p>
-        <label for="nombreBiblioteca">Nombre</label>
+        <h2>{{ 'libraries.createTitle' | translate }}</h2>
+        <p>{{ 'libraries.createDesc' | translate }}</p>
+        <label for="nombreBiblioteca">{{ 'common.name' | translate }}</label>
         <input
           id="nombreBiblioteca"
           type="text"
           [(ngModel)]="nombreNuevaBiblioteca"
           maxlength="100"
-          placeholder="Ej. Pendientes, Favoritos, Terminados..."
+          [placeholder]="'libraries.createPlaceholder' | translate"
         />
         @if (createError()) {
           <p class="modal-error" role="alert">{{ createError() }}</p>
         }
         <div class="modal-actions">
-          <button type="button" class="btn-modal secundario" (click)="cerrarModalCrear()" [disabled]="creating()">Cancelar</button>
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalCrear()" [disabled]="creating()">{{ 'common.cancel' | translate }}</button>
           <button type="button" class="btn-modal principal" (click)="crearBiblioteca()" [disabled]="creating()">
-            {{ creating() ? 'Creando…' : 'Crear' }}
+            {{ creating() ? ('libraries.creating' | translate) : ('common.create' | translate) }}
           </button>
         </div>
       </div>
     </div>
   }
 
+  <!-- Modal renombrar -->
   @if (showRenameModal()) {
     <div class="modal-backdrop" (click)="cerrarModalRenombrar()">
       <div class="modal-card" (click)="$event.stopPropagation()">
-        <h2>Renombrar biblioteca</h2>
-        <label for="nombreEditarBiblioteca">Nuevo nombre</label>
+        <h2>{{ 'libraries.renameTitle' | translate }}</h2>
+        <label for="nombreEditarBiblioteca">{{ 'libraries.newName' | translate }}</label>
         <input id="nombreEditarBiblioteca" type="text" [(ngModel)]="nombreEditarBiblioteca" maxlength="100" />
         @if (renameError()) {
           <p class="modal-error" role="alert">{{ renameError() }}</p>
         }
         <div class="modal-actions">
-          <button type="button" class="btn-modal secundario" (click)="cerrarModalRenombrar()" [disabled]="renaming()">Cancelar</button>
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalRenombrar()" [disabled]="renaming()">{{ 'common.cancel' | translate }}</button>
           <button type="button" class="btn-modal principal" (click)="renombrarBiblioteca()" [disabled]="renaming()">
-            {{ renaming() ? 'Guardando…' : 'Guardar' }}
+            {{ renaming() ? ('libraries.saving' | translate) : ('common.save' | translate) }}
           </button>
         </div>
       </div>
     </div>
   }
 
+  <!-- Modal eliminar -->
   @if (showDeleteModal()) {
     <div class="modal-backdrop" (click)="cerrarModalEliminar()">
       <div class="modal-card" (click)="$event.stopPropagation()">
-        <h2>Eliminar biblioteca</h2>
-        <p>Se eliminará <strong>{{ bibliotecaSeleccionada?.nombre }}</strong>. Esta acción no se puede deshacer.</p>
+        <h2>{{ 'libraries.deleteTitle' | translate }}</h2>
+        <p>{{ 'libraries.deleteDescStart' | translate }} <strong>{{ bibliotecaSeleccionada?.nombre }}</strong>. {{ 'libraries.deleteDescEnd' | translate }}</p>
         @if (deleteError()) {
           <p class="modal-error" role="alert">{{ deleteError() }}</p>
         }
         <div class="modal-actions">
-          <button type="button" class="btn-modal secundario" (click)="cerrarModalEliminar()" [disabled]="deleting()">Cancelar</button>
+          <button type="button" class="btn-modal secundario" (click)="cerrarModalEliminar()" [disabled]="deleting()">{{ 'common.cancel' | translate }}</button>
           <button type="button" class="btn-modal danger" (click)="eliminarBiblioteca()" [disabled]="deleting()">
-            {{ deleting() ? 'Eliminando…' : 'Eliminar' }}
+            {{ deleting() ? ('libraries.deleting' | translate) : ('common.delete' | translate) }}
           </button>
         </div>
       </div>

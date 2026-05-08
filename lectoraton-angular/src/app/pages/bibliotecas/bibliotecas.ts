@@ -2,17 +2,17 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BibliotecaDTO, BibliotecaService } from '../../core/biblioteca/biblioteca.service';
 
 @Component({
   selector: 'app-bibliotecas',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, TranslatePipe],
   templateUrl: './bibliotecas.html',
   styleUrl: './bibliotecas.css',
 })
 export class BibliotecasPage implements OnInit {
-  /** Libros por tabla visual de la estantería (como en el diseño). */
   protected readonly librosPorEstante = 4;
   protected readonly bibliotecasFijas = ['Leyendo', 'Leído', 'Por Leer'];
 
@@ -32,18 +32,25 @@ export class BibliotecasPage implements OnInit {
   protected nombreNuevaBiblioteca = '';
   protected nombreEditarBiblioteca = '';
 
-  constructor(private readonly bibliotecaService: BibliotecaService) {}
+  /* Constructor */
+  constructor(
+    private readonly bibliotecaService: BibliotecaService,
+    private readonly translate: TranslateService,
+  ) {}
 
+  /* On init */
   ngOnInit(): void {
     this.cargarBibliotecas();
   }
 
+  /* Abrir modal crear */
   protected abrirModalCrear(): void {
     this.nombreNuevaBiblioteca = '';
     this.createError.set(null);
     this.showCreateModal.set(true);
   }
 
+  /* Cerrar modal crear */
   protected cerrarModalCrear(): void {
     if (this.creating()) {
       return;
@@ -51,19 +58,22 @@ export class BibliotecasPage implements OnInit {
     this.showCreateModal.set(false);
   }
 
+  /* Crear biblioteca */
   protected crearBiblioteca(): void {
     const nombre = this.nombreNuevaBiblioteca.trim();
     if (!nombre) {
-      this.createError.set('Introduce un nombre para la biblioteca.');
+      this.createError.set(this.translate.instant('libraries.errorEnterName'));
       return;
     }
     this.createError.set(null);
     this.creating.set(true);
+    /* Crear biblioteca */
     this.bibliotecaService.createBiblioteca({ nombre }).subscribe({
       next: () => {
         this.creating.set(false);
         this.showCreateModal.set(false);
         this.cargarBibliotecas();
+        /* Cargar bibliotecas */
       },
       error: (err: HttpErrorResponse) => {
         this.creating.set(false);
@@ -72,11 +82,12 @@ export class BibliotecasPage implements OnInit {
           this.createError.set(body);
           return;
         }
-        this.createError.set(body?.message || 'No se pudo crear la biblioteca.');
+        this.createError.set(body?.message || this.translate.instant('libraries.errorCreate'));
       },
     });
   }
 
+  /* Abrir modal renombrar */
   protected abrirModalRenombrar(b: BibliotecaDTO, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
@@ -86,6 +97,7 @@ export class BibliotecasPage implements OnInit {
     this.showRenameModal.set(true);
   }
 
+  /* Cerrar modal renombrar */
   protected cerrarModalRenombrar(): void {
     if (this.renaming()) {
       return;
@@ -93,6 +105,7 @@ export class BibliotecasPage implements OnInit {
     this.showRenameModal.set(false);
   }
 
+  /* Renombrar biblioteca */  
   protected renombrarBiblioteca(): void {
     const b = this.bibliotecaSeleccionada;
     if (!b) {
@@ -100,12 +113,14 @@ export class BibliotecasPage implements OnInit {
     }
     const nombre = this.nombreEditarBiblioteca.trim();
     if (!nombre) {
-      this.renameError.set('Introduce un nombre válido.');
+      this.renameError.set(this.translate.instant('libraries.errorEnterValidName'));
       return;
     }
+    /* Renombrar biblioteca */
     this.renaming.set(true);
     this.renameError.set(null);
     this.bibliotecaService.renameBiblioteca(b.id, { nombre }).subscribe({
+      /* Renombrar biblioteca */
       next: () => {
         this.renaming.set(false);
         this.showRenameModal.set(false);
@@ -114,11 +129,12 @@ export class BibliotecasPage implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.renaming.set(false);
         const body = err.error as string | { message?: string } | undefined;
-        this.renameError.set(typeof body === 'string' ? body : body?.message || 'No se pudo renombrar la biblioteca.');
+        this.renameError.set(typeof body === 'string' ? body : body?.message || this.translate.instant('libraries.errorRename'));
       },
     });
   }
 
+  /* Abrir modal eliminar */
   protected abrirModalEliminar(b: BibliotecaDTO, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
@@ -127,10 +143,12 @@ export class BibliotecasPage implements OnInit {
     this.showDeleteModal.set(true);
   }
 
+  /* Es biblioteca fija */
   protected esBibliotecaFija(nombre: string): boolean {
     return this.bibliotecasFijas.some((fija) => fija.toLowerCase() === nombre.toLowerCase());
   }
 
+  /* Cerrar modal eliminar */
   protected cerrarModalEliminar(): void {
     if (this.deleting()) {
       return;
@@ -138,11 +156,13 @@ export class BibliotecasPage implements OnInit {
     this.showDeleteModal.set(false);
   }
 
+  /* Eliminar biblioteca */
   protected eliminarBiblioteca(): void {
     const b = this.bibliotecaSeleccionada;
     if (!b) {
       return;
     }
+    /* Eliminar biblioteca */
     this.deleting.set(true);
     this.deleteError.set(null);
     this.bibliotecaService.deleteBiblioteca(b.id).subscribe({
@@ -154,12 +174,12 @@ export class BibliotecasPage implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.deleting.set(false);
         const body = err.error as string | { message?: string } | undefined;
-        this.deleteError.set(typeof body === 'string' ? body : body?.message || 'No se pudo eliminar la biblioteca.');
+        this.deleteError.set(typeof body === 'string' ? body : body?.message || this.translate.instant('libraries.errorDelete'));
       },
     });
   }
 
-  /** Agrupa bibliotecas en filas; cada fila tiene su propia tabla de madera. */
+  /* Filas estante */
   protected filasEstante(): BibliotecaDTO[][] {
     const list = this.items();
     const n = this.librosPorEstante;
@@ -170,6 +190,7 @@ export class BibliotecasPage implements OnInit {
     return rows;
   }
 
+  /* Cargar bibliotecas */
   private cargarBibliotecas(): void {
     this.loading.set(true);
     this.error.set(null);
@@ -179,7 +200,7 @@ export class BibliotecasPage implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudieron cargar las bibliotecas. Comprueba la sesión o inténtalo más tarde.');
+        this.error.set(this.translate.instant('libraries.errorLoad'));
         this.loading.set(false);
       },
     });

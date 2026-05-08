@@ -15,6 +15,7 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
 
     Page<Resena> findByUsuarioId(Long usuarioId, Pageable pageable);
 
+    // Para buscar en un libro por titulo o contenido
     @Query("""
             SELECT r FROM Resena r
             WHERE r.libro.id = :libroId

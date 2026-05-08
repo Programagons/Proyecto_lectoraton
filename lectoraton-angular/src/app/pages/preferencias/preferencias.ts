@@ -1,25 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-const LANG_KEY = 'lectoraton_lang';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageService, AppLanguage } from '../../core/i18n/language.service';
 
 @Component({
   selector: 'app-preferencias',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './preferencias.html',
   styleUrl: './preferencias.css',
 })
 export class PreferenciasPage implements OnInit {
-  protected idioma = 'es';
+  protected idioma: AppLanguage = 'es';
+
+  constructor(private readonly languageService: LanguageService) {}
 
   ngOnInit(): void {
-    this.idioma = localStorage.getItem(LANG_KEY) || 'es';
+    this.idioma = this.languageService.currentLanguage();
     document.documentElement.lang = this.idioma;
   }
 
   protected guardarIdioma(): void {
-    localStorage.setItem(LANG_KEY, this.idioma);
+    this.languageService.setLanguage(this.idioma);
     document.documentElement.lang = this.idioma;
   }
 }

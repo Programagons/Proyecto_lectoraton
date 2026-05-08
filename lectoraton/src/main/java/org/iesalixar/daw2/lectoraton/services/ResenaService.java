@@ -66,6 +66,13 @@ public class ResenaService {
         return resenaRepository.findByUsuarioIdAndLibroId(usuarioId, libroId).map(resenaMapper::toDTO);
     }
 
+    /**
+     * Crea una nueva reseña.
+     *
+     * @param dto Datos de la reseña a crear.
+     * @return ResenaDTO de la reseña creada.
+     * @throws IllegalArgumentException si el usuario o el libro no existen, o si ya existe una reseña para ese usuario y libro.
+     */
     public ResenaDTO create(ResenaCreateDTO dto) {
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
@@ -98,6 +105,14 @@ public class ResenaService {
         return resenaMapper.toDTO(guardada);
     }
 
+    /**
+     * Califica un libro.
+     *
+     * @param usuarioId ID del usuario que califica el libro.
+     * @param libroId ID del libro a calificar.
+     * @param calificacion Calificación del libro.
+     * @throws IllegalArgumentException si el usuario o el libro no existen.
+     */
     public void calificarLibro(Long usuarioId, Long libroId, Integer calificacion) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
@@ -134,6 +149,15 @@ public class ResenaService {
         resenaRepository.delete(resena);
     }
 
+    /**
+     * Actualiza una reseña propia.
+     *
+     * @param id ID de la reseña a actualizar.
+     * @param usuarioId ID del usuario que actualiza la reseña.
+     * @param dto Datos de la reseña a actualizar.
+     * @return ResenaDTO de la reseña actualizada.
+     * @throws IllegalArgumentException si la reseña no existe o no es propia.
+     */
     public ResenaDTO updatePropia(Long id, Long usuarioId, ResenaUpdateDTO dto) {
         Resena resena = resenaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada."));
@@ -164,6 +188,14 @@ public class ResenaService {
         return resenaMapper.toDTO(guardada);
     }
 
+    /**
+     * Agrega o elimina un like a una reseña.
+     *
+     * @param resenaId ID de la reseña a la que se le agrega o elimina el like.
+     * @param usuarioId ID del usuario que agrega o elimina el like.
+     * @return ResenaDTO de la reseña con el contexto del usuario actual.
+     * @throws IllegalArgumentException si la reseña o el usuario no existen.
+     */
     public ResenaDTO toggleLike(Long resenaId, Long usuarioId) {
         Resena resena = resenaRepository.findById(resenaId)
                 .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada."));

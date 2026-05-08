@@ -1,10 +1,12 @@
+/* Página de perfil */
 .perfil-page {
   max-width: 900px;
   margin: 0 auto;
   padding: 1.2rem 1rem 2rem;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Tarjeta de perfil */
 .perfil-card {
   margin-top: 0.8rem;
   background: linear-gradient(180deg, #f3ead8 0%, #ebe0cc 100%);
@@ -16,6 +18,7 @@
   gap: 0.8rem;
 }
 
+/* Avatar del usuario */
 .avatar {
   width: 92px;
   height: 92px;
@@ -34,10 +37,26 @@
   object-fit: cover;
 }
 
+/* Datos del usuario */
 .datos p {
   margin: 0.2rem 0;
 }
 
+/* Acciones de la foto */
+.foto-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.foto-actions input[type='file'] {
+  max-width: 260px;
+  font-size: 0.86rem;
+}
+
+/* Textarea de la biografía */
 .datos textarea {
   width: 100%;
   min-height: 100px;
@@ -51,48 +70,57 @@
   font: inherit;
 }
 
+/* Acciones de la biografía */
 .acciones-bio {
   margin-top: 0.45rem;
   display: flex;
   gap: 0.45rem;
 }
 
+/* Botones de edición y cancelación */
 .btn-editar,
 .btn-cancelar {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.45rem 0.85rem;
   font-weight: 700;
   cursor: pointer;
 }
 
+/* Botón de edición */
 .btn-editar {
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
 }
 
+/* Botón de cancelación */
 .btn-cancelar {
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
+/* Mensajes de estado */
 .state-msg.ok {
   color: #2d6a3f;
 }
 
+/* Mensajes de error */
 .state-msg.error {
   color: #6b2c2c;
 }
 
+/* Roles del usuario */
 .roles-wrap {
   margin: 0.5rem 0 0;
 }
 
+/* Strong de los roles */
 .roles-wrap strong {
   display: block;
   margin-bottom: 0.25rem;
 }
 
+/* Lista de roles */
 .roles-list {
   list-style: none;
   margin: 0;
@@ -102,15 +130,17 @@
   gap: 0.35rem;
 }
 
+/* Chip de rol */
 .rol-chip {
   display: inline-block;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(173, 123, 89, 0.25);
   font-size: 0.82rem;
   font-weight: 700;
 }
 
+/* Hint de rol */
 .rol-hint {
   margin: 0.35rem 0 0 !important;
   font-size: 0.78rem;
@@ -118,32 +148,37 @@
   line-height: 1.35;
 }
 
+/* Bloque de solicitud de editor */
 .solicitud-editor-block {
   margin-top: 1rem;
   padding-top: 0.85rem;
   border-top: 1px dashed rgba(139, 115, 85, 0.35);
 }
 
+/* Texto de solicitud */
 .solicitud-texto {
   margin: 0 0 0.5rem;
   font-size: 0.92rem;
 }
 
+/* Botón de solicitud */
 .btn-solicitud {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 1rem;
   font-weight: 700;
   cursor: pointer;
-  background: #5c4033;
+  background: var(--color-text);
   color: #fff;
 }
 
+/* Botón de solicitud deshabilitado */
 .btn-solicitud:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
+/* Nota de solicitud */
 .solicitud-nota {
   margin: 0.6rem 0 0;
   font-size: 0.78rem;
@@ -151,6 +186,7 @@
   line-height: 1.4;
 }
 
+/* Media query para pantallas pequeñas */
 @media (max-width: 560px) {
   .perfil-card {
     grid-template-columns: 1fr;
@@ -158,14 +194,17 @@
     text-align: center;
   }
 
+  /* Roles del usuario */
   .roles-wrap {
     text-align: center;
   }
 
+  /* Lista de roles */
   .roles-list {
     justify-content: center;
   }
 
+  /* Hint de rol y nota de solicitud */
   .rol-hint,
   .solicitud-nota {
     text-align: left;

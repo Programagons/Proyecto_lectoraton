@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import Carousel from 'bootstrap/js/dist/carousel';
 import { forkJoin } from 'rxjs';
 import {
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-explorar',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, TranslatePipe],
   templateUrl: './explorar.html',
   styleUrl: './explorar.css',
 })
@@ -46,7 +47,10 @@ export class ExplorarPage implements OnInit, OnDestroy, AfterViewInit {
   private instanciaNovedades?: Carousel;
   private instanciaMasLeidos?: Carousel;
 
-  constructor(private readonly libroService: LibroService) {}
+  constructor(
+    private readonly libroService: LibroService,
+    private readonly translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.libroService.getGeneros().subscribe({ next: (items) => this.generos.set(items) });
@@ -125,15 +129,15 @@ export class ExplorarPage implements OnInit, OnDestroy, AfterViewInit {
           this.paginaActual.set(res.number ?? 0);
           this.totalPaginas.set(res.totalPages ?? 0);
           if (reiniciar) {
-            this.libros.set(res.content || []);
+            this.libros.set(res.content ?? []);
           } else {
-            this.libros.set([...(this.libros() || []), ...((res.content as LibroExplorarDTO[]) || [])]);
+            this.libros.update((actuales) => [...actuales, ...(res.content ?? [])]);
           }
           this.loading.set(false);
           this.loadingMore.set(false);
         },
         error: () => {
-          this.error.set('No se pudo cargar la exploración.');
+          this.error.set(this.translate.instant('explore.errorLoad'));
           this.loading.set(false);
           this.loadingMore.set(false);
         },

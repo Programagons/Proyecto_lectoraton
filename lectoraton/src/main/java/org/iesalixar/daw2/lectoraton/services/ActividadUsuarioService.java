@@ -23,6 +23,10 @@ import java.util.Set;
 public class ActividadUsuarioService {
 
     private static final int TEXTO_MAX = 500;
+    /**
+     * Prefijo para los comentarios spoiler.
+     */
+    private static final String SPOILER_PREFIX = "[SPOILER] ";
 
     private final ActividadUsuarioRepository actividadUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
@@ -33,24 +37,36 @@ public class ActividadUsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    /**
+     * Obtiene el feed para un usuario.
+     * @param usuarioId ID del usuario.
+     * @param incluirPropias Si incluir las propias.
+     * @param pageable Parámetros de paginación.
+     * @return Página de FeedItemDTO.
+     */
     @Transactional(readOnly = true)
     public Page<FeedItemDTO> getFeedParaUsuario(Long usuarioId, boolean incluirPropias, Pageable pageable) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
-        Set<Long> actorIds = new HashSet<>();
-        for (Usuario s : usuario.getSeguidos()) {
+        
+        Set<Long> actorIds = new HashSet<>(); // Se obtienen los IDs de los actores.        
+        for (Usuario s : usuario.getSeguidos()) { // Se obtienen los IDs de los seguidos.
             actorIds.add(s.getId());
         }
-        if (incluirPropias) {
+        if (incluirPropias) { // Se incluyen las propias.
             actorIds.add(usuarioId);
         }
-        if (actorIds.isEmpty()) {
+        if (actorIds.isEmpty()) { // Se verifica si no hay actores.
             return Page.empty(pageable);
         }
-        return actividadUsuarioRepository
+        return actividadUsuarioRepository // Se obtienen las actividades de los actores.
                 .findByUsuarioActor_IdInOrderByFechaCreacionDesc(actorIds, pageable)
                 .map(this::toFeedItem);
     }
 
+    /**
+     * Registra una nueva reseña.
+     * @param resena Resena.
+     */
     @Transactional
     public void registrarResenaNueva(Resena resena) {
         ActividadUsuario a = new ActividadUsuario();
@@ -64,20 +80,32 @@ public class ActividadUsuarioService {
         actividadUsuarioRepository.save(a);
     }
 
+    /**
+     * Registra un nuevo comentario.
+     * @param comentario Comentario.
+     */
     @Transactional
     public void registrarComentarioNuevo(Comentario comentario) {
         Resena resena = comentario.getResena();
+        boolean contieneSpoiler = Boolean.TRUE.equals(comentario.getContieneSpoiler());
         ActividadUsuario a = new ActividadUsuario();
         a.setUsuarioActor(comentario.getUsuario());
         a.setUsuarioDestino(resena.getUsuario());
         a.setTipo(TipoActividadUsuario.COMENTARIO);
         a.setLibro(resena.getLibro());
         a.setResena(resena);
-        a.setTexto(truncar(comentario.getContenido(), TEXTO_MAX));
+        String textoComentario = truncar(comentario.getContenido(), TEXTO_MAX);
+        a.setTexto(contieneSpoiler ? SPOILER_PREFIX + textoComentario : textoComentario);
         a.setFechaCreacion(LocalDateTime.now());
         actividadUsuarioRepository.save(a);
     }
 
+    /**
+     * Registra un nuevo progreso de lectura.
+     * @param actor Actor.
+     * @param libro Libro.
+     * @param dto DTO de progreso de lectura.
+     */
     @Transactional
     public void registrarProgresoLectura(Usuario actor, Libro libro, ProgresoLecturaDTO dto) {
         ActividadUsuario a = new ActividadUsuario();
@@ -92,6 +120,11 @@ public class ActividadUsuarioService {
         actividadUsuarioRepository.save(a);
     }
 
+    /**
+     * Convierte una actividad a un DTO de feed.
+     * @param a Actividad.
+     * @return FeedItemDTO.
+     */
     private FeedItemDTO toFeedItem(ActividadUsuario a) {
         FeedItemDTO dto = new FeedItemDTO();
         dto.setId(a.getId());
@@ -114,10 +147,24 @@ public class ActividadUsuarioService {
         if (a.getResena() != null) {
             dto.setResenaId(a.getResena().getId());
         }
-        dto.setTexto(a.getTexto());
+        String texto = a.getTexto();
+        boolean esComentarioSpoiler = a.getTipo() == TipoActividadUsuario.COMENTARIO
+                && texto != null
+                && texto.startsWith(SPOILER_PREFIX);
+        dto.setContieneSpoiler(esComentarioSpoiler);
+        if (esComentarioSpoiler) {
+            dto.setTexto(texto.substring(SPOILER_PREFIX.length()));
+        } else {
+            dto.setTexto(texto);
+        }
         return dto;
     }
 
+    /**
+     * Obtiene el texto para una reseña.
+     * @param resena Resena.
+     * @return Texto.
+     */
     private String textoParaResena(Resena resena) {
         if (resena.getTitulo() != null && !resena.getTitulo().isBlank()) {
             return truncar("Nueva reseña: " + resena.getTitulo().trim(), TEXTO_MAX);
@@ -126,6 +173,12 @@ public class ActividadUsuarioService {
         return truncar("Nueva reseña en \"" + tituloLibro + "\"", TEXTO_MAX);
     }
 
+    /**
+     * Trunca un texto.
+     * @param s Texto.
+     * @param max Longitud máxima.
+     * @return Texto truncado.
+     */
     private static String truncar(String s, int max) {
         if (s == null) {
             return null;

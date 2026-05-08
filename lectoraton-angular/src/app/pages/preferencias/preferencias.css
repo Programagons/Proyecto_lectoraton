@@ -2,7 +2,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 1.2rem 1rem 2rem;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .card {
@@ -20,14 +20,17 @@
 .card button {
   border: none;
   border-radius: 10px;
-  background: #e3c7a1;
-  color: #5c4033;
+  background: var(--color-input);
+  color: var(--color-text);
   padding: 0.55rem 0.75rem;
 }
 
-.card button {
-  background: #ad7b59;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
+.card select {
+  border: 1px solid color-mix(in srgb, var(--color-panel-border) 70%, transparent);
+}
+
+.nota {
+  margin: 0;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--color-text) 74%, transparent);
 }

@@ -43,8 +43,13 @@ public class LibroDetalleService {
         this.resenaRepository = resenaRepository;
         this.bibliotecaLibroRepository = bibliotecaLibroRepository;
     }
-
-    public LibroDetalleDTO getDetalle(Long libroId, Long usuarioId) {
+    /**
+     * Obtiene el detalle de un libro.
+     * @param libroId ID del libro.
+     * @param usuarioId ID del usuario.
+     * @return LibroDetalleDTO.
+     */
+    public LibroDetalleDTO getDetalle(Long libroId, Long usuarioId) {   
         Libro libro = libroRepository.findById(libroId)
                 .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
 
@@ -71,6 +76,11 @@ public class LibroDetalleService {
         return dto;
     }
 
+    /**
+     * Construye el resumen de reseñas.
+     * @param libroId ID del libro.
+     * @return ResenaResumenDTO.
+     */
     private ResenaResumenDTO buildResumen(Long libroId) {
         ResenaResumenDTO resumen = new ResenaResumenDTO();
         Double media = usuarioLibroRepository.averageCalificacionByLibroId(libroId);
@@ -96,6 +106,12 @@ public class LibroDetalleService {
         return resumen;
     }
 
+    /**
+     * Construye la lista de amigos que han leido el libro.
+     * @param libroId ID del libro.
+     * @param usuarioId ID del usuario.
+     * @return Lista de UsuarioMiniDTO.
+     */
     private List<UsuarioMiniDTO> buildAmigosQueHanLeido(Long libroId, Long usuarioId) {
         Usuario actual = usuarioRepository.findById(usuarioId).orElse(null);
         if (actual == null || actual.getSeguidos().isEmpty()) {
@@ -112,6 +128,11 @@ public class LibroDetalleService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Construye la lista de otros libros del mismo autor.
+     * @param libro Libro.
+     * @return Lista de LibroMiniDTO.
+     */
     private List<LibroMiniDTO> buildOtrosAutor(Libro libro) {
         if (libro.getAutor() == null) {
             return List.of();
@@ -122,6 +143,11 @@ public class LibroDetalleService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Construye la lista de libros similares.
+     * @param libro Libro.
+     * @return Lista de LibroMiniDTO.
+     */
     private List<LibroMiniDTO> buildSimilares(Libro libro) {
         List<Long> generoIds = libro.getGeneros().stream().map(g -> g.getId()).toList();
         List<Long> tropoIds = libro.getTropos().stream().map(t -> t.getId()).toList();
@@ -150,6 +176,11 @@ public class LibroDetalleService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Convierte un libro a un mini libro.
+     * @param libro Libro.
+     * @return LibroMiniDTO.
+     */
     private LibroMiniDTO toLibroMini(Libro libro) {
         LibroMiniDTO dto = new LibroMiniDTO();
         dto.setId(libro.getId());
@@ -159,6 +190,11 @@ public class LibroDetalleService {
         return dto;
     }
 
+    /**
+     * Convierte un usuario a un mini usuario.
+     * @param usuario Usuario.
+     * @return UsuarioMiniDTO.
+     */
     private UsuarioMiniDTO toUsuarioMini(Usuario usuario) {
         UsuarioMiniDTO dto = new UsuarioMiniDTO();
         dto.setId(usuario.getId());

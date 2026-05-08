@@ -1,50 +1,65 @@
 <header class="app-header">
-  <a [routerLink]="auth.isLoggedIn() ? '/inicio' : '/'" class="logo" aria-label="Lectoratón - Inicio">
-    <img src="https://i.imgur.com/CS192xF.png" alt="Lectoratón" class="logo-img" />
+  <a [routerLink]="auth.isLoggedIn() ? '/inicio' : '/'" class="logo" [attr.aria-label]="'header.ariaHome' | translate">
+    <img src="https://i.imgur.com/CS192xF.png" [alt]="'header.logoAlt' | translate" class="logo-img" />
   </a>
-  <nav class="nav-links" aria-label="Principal">
+  <nav class="nav-links" [attr.aria-label]="'header.ariaMainNav' | translate">
+    <!-- Si el usuario está autenticado, muestra el enlace a la página de inicio. -->
     @if (auth.isLoggedIn()) {
-      <a routerLink="/inicio" routerLinkActive="active">Inicio</a>
+      <a routerLink="/inicio" routerLinkActive="active">{{ 'header.home' | translate }}</a>
     } @else {
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'header.home' | translate }}</a>
     }
-    <a routerLink="/bibliotecas" routerLinkActive="active">Bibliotecas</a>
-    <a routerLink="/explorar" routerLinkActive="active">Explorar</a>
-    <a routerLink="/recomendador" routerLinkActive="active">Recomendador</a>
-    <a routerLink="/comunidad" routerLinkActive="active">Comunidad</a>
+    <a routerLink="/bibliotecas" routerLinkActive="active">{{ 'header.libraries' | translate }}</a>
+    <a routerLink="/explorar" routerLinkActive="active">{{ 'header.explore' | translate }}</a>
+    <a routerLink="/recomendador" routerLinkActive="active">{{ 'header.recommender' | translate }}</a>
+    <a routerLink="/comunidad" routerLinkActive="active">{{ 'header.community' | translate }}</a>
+    <!-- Si el usuario puede publicar libros, muestra el enlace a la página de agregar libro. -->
     @if (auth.canPublishBooks()) {
-      <a routerLink="/agregar-libro" routerLinkActive="active">Agregar libro</a>
+      <a routerLink="/agregar-libro" routerLinkActive="active">{{ 'header.addBook' | translate }}</a>
     }
   </nav>
   <div class="header-actions">
+    <label class="lang-wrap" [attr.aria-label]="'header.language' | translate">
+      <!-- Muestra el idioma actual. -->
+      <select class="lang-select" [value]="currentLanguage()" (change)="setLanguage($any($event.target).value)">
+        <!-- Opciones de idioma: español y inglés. -->
+        <option value="es">ES</option>
+        <option value="en">EN</option>
+      </select>
+    </label>
+    <!-- Si el usuario está autenticado, muestra el nombre de usuario. -->
     @if (auth.isLoggedIn()) {
       <span class="user-pill">{{ auth.getUsername() }}</span>
     }
+    <!-- Menú de opciones. -->
     <div class="menu-wrap" (click)="$event.stopPropagation()">
-      <button type="button" class="menu-btn" aria-label="Menú" (click)="toggleMenu()">
+      <!-- Botón para abrir el menú. -->
+      <button type="button" class="menu-btn" [attr.aria-label]="'header.menu' | translate" (click)="toggleMenu()">
         <span></span>
         <span></span>
         <span></span>
       </button>
       @if (menuOpen()) {
+        <!-- Menú de opciones. -->
         <div class="bookmark-menu">
+          <!-- Si el usuario está autenticado, muestra las opciones de perfil, notificaciones, preferencias, recomendador y agregar libro. -->
           @if (auth.isLoggedIn()) {
-            <a routerLink="/perfil" (click)="closeMenu()">Perfil</a>
-            <a routerLink="/notificaciones" (click)="closeMenu()">Notificaciones</a>
-            <a routerLink="/preferencias" (click)="closeMenu()">Preferencias</a>
-            <a routerLink="/recomendador" (click)="closeMenu()">Recomendador</a>
+            <a routerLink="/perfil" (click)="closeMenu()">{{ 'header.profile' | translate }}</a>
+            <a routerLink="/notificaciones" (click)="closeMenu()">{{ 'header.notifications' | translate }}</a>
+            <a routerLink="/preferencias" (click)="closeMenu()">{{ 'header.preferences' | translate }}</a>
+            <a routerLink="/recomendador" (click)="closeMenu()">{{ 'header.recommender' | translate }}</a>
             @if (auth.canPublishBooks()) {
-              <a routerLink="/agregar-libro" (click)="closeMenu()">Agregar libro</a>
+              <a routerLink="/agregar-libro" (click)="closeMenu()">{{ 'header.addBook' | translate }}</a>
             }
-            <button type="button" class="menu-link-btn" (click)="cerrarSesion()">Cerrar sesión</button>
+            <button type="button" class="menu-link-btn" (click)="cerrarSesion()">{{ 'header.logout' | translate }}</button>
           } @else {
-            <a routerLink="/" (click)="closeMenu()">Iniciar sesión</a>
-            <a routerLink="/registro" (click)="closeMenu()">Registro</a>
+            <a routerLink="/" (click)="closeMenu()">{{ 'header.login' | translate }}</a>
+            <a routerLink="/registro" (click)="closeMenu()">{{ 'header.register' | translate }}</a>
           }
         </div>
       }
     </div>
-    <label class="toggle-wrap" aria-label="Alternar tema">
+    <label class="toggle-wrap" [attr.aria-label]="'header.toggleTheme' | translate">
       <input type="checkbox" class="toggle-input" [checked]="darkMode()" (change)="toggleDarkMode()" />
       <span class="toggle-slider"></span>
     </label>

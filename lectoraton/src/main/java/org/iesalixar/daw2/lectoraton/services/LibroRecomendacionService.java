@@ -25,6 +25,11 @@ public class LibroRecomendacionService {
     }
 
     @Transactional(readOnly = true)
+    /**
+     * Obtiene una recomendación de libro.
+     * @param libroId ID del libro.
+     * @return LibroRecomendacionDTO.
+     */
     public LibroRecomendacionDTO recomendar(long libroId) {
         Libro origen = libroRepository.findOneWithAssociations(libroId)
                 .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
@@ -52,6 +57,11 @@ public class LibroRecomendacionService {
         return dto;
     }
 
+    /**
+     * Obtiene los libros similares candidatos.
+     * @param libro Libro.
+     * @return Lista de Libro.
+     */
     private List<Libro> listarSimilaresCandidatos(Libro libro) {
         List<Long> generoIds = libro.getGeneros().stream().map(g -> g.getId()).toList();
         List<Long> tropoIds = libro.getTropos().stream().map(t -> t.getId()).toList();
@@ -80,6 +90,12 @@ public class LibroRecomendacionService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Elige el mejor match.
+     * @param origen Libro origen.
+     * @param candidatos Lista de Libro candidatos.
+     * @return Libro.
+     */
     private Libro elegirMejorMatch(Libro origen, List<Libro> candidatos) {
         Comparator<Libro> porTitulo = Comparator.comparing(l -> l.getTitulo() == null ? "" : l.getTitulo(),
                 String.CASE_INSENSITIVE_ORDER);
@@ -90,17 +106,26 @@ public class LibroRecomendacionService {
                 .orElse(candidatos.get(0));
     }
 
+    /**
+     * Calcula la puntuación.
+     * @param origen Libro origen.
+     * @param cand Libro candidato.
+     * @return Puntuación.
+     */
     private int puntuacion(Libro origen, Libro cand) {
+        // Se calculan los géneros y tropos en común.
         Set<Long> og = idsGeneros(origen);
         Set<Long> ot = idsTropos(origen);
         int g = (int) cand.getGeneros().stream().filter(gx -> og.contains(gx.getId())).count();
         int t = (int) cand.getTropos().stream().filter(tx -> ot.contains(tx.getId())).count();
         int p = g * 10 + t * 8;
 
+        // Se verifica si el autor es el mismo.
         Long aid = origen.getAutor() != null ? origen.getAutor().getId() : null;
         if (aid != null && cand.getAutor() != null && aid.equals(cand.getAutor().getId())) {
             p += 6;
         }
+        // Se verifica si la saga es la misma.
         String saga = origen.getSagaNombre();
         if (saga != null && !saga.isBlank()
                 && cand.getSagaNombre() != null
@@ -110,6 +135,12 @@ public class LibroRecomendacionService {
         return p;
     }
 
+    /**
+     * Obtiene la explicación del match.
+     * @param origen Libro origen.
+     * @param elegido Libro elegido.
+     * @return Explicación.
+     */
     private String explicacionMatch(Libro origen, Libro elegido) {
         Set<Long> og = idsGeneros(origen);
         Set<Long> ot = idsTropos(origen);
@@ -143,6 +174,11 @@ public class LibroRecomendacionService {
         return "Por " + String.join(", ", partes) + ".";
     }
 
+    /**
+     * Obtiene el primer otro del autor.
+     * @param libro Libro.
+     * @return Libro.
+     */
     private Libro primerOtroDelAutor(Libro libro) {
         if (libro.getAutor() == null) {
             return null;
@@ -153,14 +189,29 @@ public class LibroRecomendacionService {
                 .orElse(null);
     }
 
+    /**
+     * Obtiene los IDs de los géneros.
+     * @param l Libro.
+     * @return Set de IDs de géneros.
+     */
     private Set<Long> idsGeneros(Libro l) {
         return l.getGeneros().stream().map(g -> g.getId()).collect(Collectors.toCollection(HashSet::new));
     }
 
+    /**
+     * Obtiene los IDs de los tropos.
+     * @param l Libro.
+     * @return Set de IDs de tropos.
+     */
     private Set<Long> idsTropos(Libro l) {
         return l.getTropos().stream().map(t -> t.getId()).collect(Collectors.toCollection(HashSet::new));
     }
 
+    /**
+     * Convierte un libro a un mini libro.
+     * @param libro Libro.
+     * @return LibroMiniDTO.
+     */
     private LibroMiniDTO toMini(Libro libro) {
         LibroMiniDTO m = new LibroMiniDTO();
         m.setId(libro.getId());

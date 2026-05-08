@@ -18,6 +18,7 @@ export interface FeedItemDTO {
   libroNumPaginas?: number | null;
   resenaId?: number | null;
   texto?: string | null;
+  contieneSpoiler?: boolean | null;
 }
 
 @Injectable({ providedIn: 'root' })

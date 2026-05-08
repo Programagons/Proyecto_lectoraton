@@ -1,15 +1,15 @@
 <div class="explorar-page">
   <section class="explorar-panel">
-    <h1>Explorar lecturas</h1>
+    <h1>{{ 'explore.title' | translate }}</h1>
 
     <div class="explorar-carruseles">
       @if (loadingCarruseles()) {
-        <p class="carrusel-estado">Cargando destacados…</p>
+        <p class="carrusel-estado">{{ 'explore.loadingFeatured' | translate }}</p>
       } @else {
         @if (slidesNovedades().length > 0) {
           <div class="bloque-carrusel">
-            <h2 class="titulo-carrusel">Novedades</h2>
-            <p class="sub-carrusel">Por fecha de publicación</p>
+            <h2 class="titulo-carrusel">{{ 'explore.news' | translate }}</h2>
+            <p class="sub-carrusel">{{ 'explore.newsSub' | translate }}</p>
             <div id="carouselNovedadesExplorar" class="carousel slide carousel-lectoraton">
               @if (slidesNovedades().length > 1) {
                 <div class="carousel-indicators">
@@ -20,7 +20,7 @@
                       [attr.data-bs-slide-to]="iN"
                       [class.active]="iN === 0"
                       [attr.aria-current]="iN === 0 ? 'true' : null"
-                      [attr.aria-label]="'Slide ' + (iN + 1)"
+                      [attr.aria-label]="('common.slide' | translate) + ' ' + (iN + 1)"
                     ></button>
                   }
                 </div>
@@ -33,7 +33,7 @@
                         <a class="carrusel-libro-card text-decoration-none" [routerLink]="['/libros', l.id]">
                           <img [src]="l.portada || ''" [alt]="l.titulo" class="carrusel-portada" />
                           <span class="carrusel-titulo">{{ l.titulo }}</span>
-                          <span class="carrusel-autor">{{ l.autorNombre || 'Autor' }}</span>
+                          <span class="carrusel-autor">{{ l.autorNombre || ('common.author' | translate) }}</span>
                         </a>
                       }
                     </div>
@@ -43,11 +43,11 @@
               @if (slidesNovedades().length > 1) {
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselNovedadesExplorar" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Anterior</span>
+                  <span class="visually-hidden">{{ 'common.previous' | translate }}</span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#carouselNovedadesExplorar" data-bs-slide="next">
                   <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Siguiente</span>
+                  <span class="visually-hidden">{{ 'common.next' | translate }}</span>
                 </button>
               }
             </div>
@@ -56,8 +56,8 @@
 
         @if (slidesMasLeidos().length > 0) {
           <div class="bloque-carrusel bloque-carrusel--segundo">
-            <h2 class="titulo-carrusel">Más leídos</h2>
-            <p class="sub-carrusel">Según calificaciones en la comunidad</p>
+            <h2 class="titulo-carrusel">{{ 'explore.mostRead' | translate }}</h2>
+            <p class="sub-carrusel">{{ 'explore.mostReadSub' | translate }}</p>
             <div id="carouselMasLeidosExplorar" class="carousel slide carousel-lectoraton">
               @if (slidesMasLeidos().length > 1) {
                 <div class="carousel-indicators">
@@ -68,7 +68,7 @@
                       [attr.data-bs-slide-to]="iM"
                       [class.active]="iM === 0"
                       [attr.aria-current]="iM === 0 ? 'true' : null"
-                      [attr.aria-label]="'Slide ' + (iM + 1)"
+                      [attr.aria-label]="('common.slide' | translate) + ' ' + (iM + 1)"
                     ></button>
                   }
                 </div>
@@ -81,7 +81,7 @@
                         <a class="carrusel-libro-card text-decoration-none" [routerLink]="['/libros', l.id]">
                           <img [src]="l.portada || ''" [alt]="l.titulo" class="carrusel-portada" />
                           <span class="carrusel-titulo">{{ l.titulo }}</span>
-                          <span class="carrusel-autor">{{ l.autorNombre || 'Autor' }}</span>
+                          <span class="carrusel-autor">{{ l.autorNombre || ('common.author' | translate) }}</span>
                         </a>
                       }
                     </div>
@@ -91,11 +91,11 @@
               @if (slidesMasLeidos().length > 1) {
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselMasLeidosExplorar" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Anterior</span>
+                  <span class="visually-hidden">{{ 'common.previous' | translate }}</span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#carouselMasLeidosExplorar" data-bs-slide="next">
                   <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Siguiente</span>
+                  <span class="visually-hidden">{{ 'common.next' | translate }}</span>
                 </button>
               }
             </div>
@@ -105,50 +105,50 @@
     </div>
 
     <div class="filtros">
-      <input type="text" [(ngModel)]="titulo" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por título..." />
-      <input type="text" [(ngModel)]="autor" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por autor..." />
-      <input type="text" [(ngModel)]="saga" (ngModelChange)="onFiltroTextoChange()" placeholder="Buscar por saga..." />
+      <input type="text" [(ngModel)]="titulo" (ngModelChange)="onFiltroTextoChange()" [placeholder]="'explore.filterTitle' | translate" />
+      <input type="text" [(ngModel)]="autor" (ngModelChange)="onFiltroTextoChange()" [placeholder]="'explore.filterAuthor' | translate" />
+      <input type="text" [(ngModel)]="saga" (ngModelChange)="onFiltroTextoChange()" [placeholder]="'explore.filterSaga' | translate" />
 
       <select [(ngModel)]="generoId" (change)="buscar(true)">
-        <option [ngValue]="null">Todos los géneros</option>
+        <option [ngValue]="null">{{ 'explore.allGenres' | translate }}</option>
         @for (g of generos(); track g.id) {
           <option [ngValue]="g.id">{{ g.nombre }}</option>
         }
       </select>
 
       <select [(ngModel)]="tropoId" (change)="buscar(true)">
-        <option [ngValue]="null">Todos los tropos</option>
+        <option [ngValue]="null">{{ 'explore.allTropes' | translate }}</option>
         @for (t of tropos(); track t.id) {
           <option [ngValue]="t.id">{{ t.nombre }}</option>
         }
       </select>
 
       <select [(ngModel)]="orden" (change)="buscar(true)">
-        <option value="titulo,asc">Titulo A-Z</option>
-        <option value="titulo,desc">Titulo Z-A</option>
-        <option value="fechaPublicacion,desc">Mas nuevos</option>
-        <option value="fechaPublicacion,asc">Mas antiguos</option>
+        <option value="titulo,asc">{{ 'explore.sortTitleAsc' | translate }}</option>
+        <option value="titulo,desc">{{ 'explore.sortTitleDesc' | translate }}</option>
+        <option value="fechaPublicacion,desc">{{ 'explore.sortNewest' | translate }}</option>
+        <option value="fechaPublicacion,asc">{{ 'explore.sortOldest' | translate }}</option>
       </select>
 
       <div class="acciones">
-        <button type="button" class="btn buscar" (click)="buscar(true)">Buscar</button>
-        <button type="button" class="btn limpiar" (click)="limpiarFiltros()">Limpiar</button>
+        <button type="button" class="btn buscar" (click)="buscar(true)">{{ 'common.search' | translate }}</button>
+        <button type="button" class="btn limpiar" (click)="limpiarFiltros()">{{ 'common.clear' | translate }}</button>
       </div>
     </div>
 
     @if (loading()) {
-      <p class="state-msg">Cargando…</p>
+      <p class="state-msg">{{ 'common.loading' | translate }}</p>
     } @else if (error()) {
       <p class="state-msg error">{{ error() }}</p>
     } @else if (libros().length === 0) {
-      <p class="state-msg">No hay resultados con esos filtros.</p>
+      <p class="state-msg">{{ 'explore.noResults' | translate }}</p>
     } @else {
       <div class="grid-libros">
         @for (l of libros(); track l.id) {
           <a class="libro-card" [routerLink]="['/libros', l.id]">
             <img [src]="l.portada || ''" alt="" />
             <h2>{{ l.titulo }}</h2>
-            <p>{{ l.autorNombre || 'Autor desconocido' }}</p>
+            <p>{{ l.autorNombre || ('explore.unknownAuthor' | translate) }}</p>
             @if (l.sagaNombre && l.numeroSaga) {
               <span class="saga">{{ l.sagaNombre }} #{{ l.numeroSaga }}</span>
             }
@@ -158,7 +158,7 @@
       @if (quedanMasResultados()) {
         <div class="load-more-wrap">
           <button type="button" class="btn buscar" [disabled]="loadingMore()" (click)="buscar(false)">
-            {{ loadingMore() ? 'Cargando…' : 'Cargar más' }}
+            {{ loadingMore() ? ('common.loading' | translate) : ('common.loadMore' | translate) }}
           </button>
         </div>
       }

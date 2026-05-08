@@ -1,3 +1,4 @@
+﻿/* Header */
 .app-header {
   display: flex;
   align-items: center;
@@ -5,18 +6,20 @@
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
   padding: 0.75rem 1.25rem;
-  background: #EBD8AE;
-  color: #5C4033;
+  background: var(--color-header);
+  color: var(--color-text);
 }
 
+/* Logo */
 .logo {
   display: flex;
   align-items: center;
-  color: #5C4033;
+  color: var(--color-text);
   text-decoration: none;
   padding: 0.25rem 0;
 }
 
+/* Imagen del logo */
 .logo .logo-img {
   height: 40px;
   width: auto;
@@ -26,6 +29,7 @@
   object-position: left center;
 }
 
+/* Enlaces de navegación */
 .nav-links {
   display: flex;
   flex-wrap: wrap;
@@ -36,6 +40,7 @@
   min-width: 0;
 }
 
+/* Media queries para pantallas pequeñas */
 @media (max-width: 720px) {
   .app-header {
     padding: 0.65rem 0.85rem;
@@ -65,35 +70,86 @@
   }
 }
 
+/* Enlaces de navegación */
 .nav-links a {
-  color: #5C4033;
+  color: var(--color-text);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
 }
 
+/* Estilos para los enlaces de navegación al pasar el cursor y cuando están activos */
 .nav-links a:hover,
 .nav-links a.active {
-  color: #3d2b20;
+  color: var(--color-text-dark);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
+/* Acciones del header */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
+/* Idioma */
+.lang-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-panel-border) 75%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-panel) 82%, transparent);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Selector de idioma */
+.lang-select {
+  border: none;
+  appearance: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.79rem;
+  font-weight: 700;
+  padding: 0.18rem 1.15rem 0.18rem 0.28rem;
+  min-width: 3.2rem;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+/* Flecha del selector de idioma */
+.lang-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.58rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 2px solid color-mix(in srgb, var(--color-text) 75%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--color-text) 75%, transparent);
+  transform: rotate(45deg) translateY(-1px);
+  pointer-events: none;
+}
+
+/* Estilos para el selector de idioma cuando está enfocado */
+.lang-select:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 60%, #fff);
+  outline-offset: 2px;
+}
+
+/* Nombre de usuario */
 .user-pill {
   font-size: 0.85rem;
-  color: #5c4033;
+  color: var(--color-text);
   max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* Botón del menú */
 .menu-btn {
   display: flex;
   flex-direction: column;
@@ -102,9 +158,10 @@
   border: none;
   padding: 0.35rem;
   cursor: pointer;
-  color: #5C4033;
+  color: var(--color-text);
 }
 
+/* Tres líneas del botón del menú */
 .menu-btn span {
   display: block;
   width: 20px;
@@ -113,20 +170,21 @@
   border-radius: 1px;
 }
 
+/* Menú */
 .menu-wrap {
   position: relative;
 }
 
+/* Menú de marcadores */
 .bookmark-menu {
   position: absolute;
   right: -0.25rem;
   top: calc(100% + 22px);
   width: 185px;
   min-height: auto;
-  background: #e6c995;
-  border: 1px solid rgba(92, 64, 51, 0.24);
+  background: var(--color-menu-bg);
+  border: 1px solid var(--color-panel-border, rgba(92, 64, 51, 0.24));
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
-  /* Más hueco inferior: el notch del clip-path no debe recortar la última fila del menú. */
   padding: 0.95rem 0.75rem 3.35rem;
   clip-path: polygon(
     0 0,
@@ -140,24 +198,23 @@
   z-index: 1300;
 }
 
+/* No se muestra el notch superior */
 .bookmark-menu::before {
   content: none;
 }
 
+/* No se muestra el notch inferior */
 .bookmark-menu::after {
   content: none;
 }
 
-.bookmark-menu::before {
-  content: none;
-}
-
+/* Enlaces del menú */
 .bookmark-menu a,
 .menu-link-btn {
   display: block;
   width: 100%;
   text-align: left;
-  color: #3f2d22;
+  color: var(--color-menu-text);
   text-decoration: none;
   background: none;
   border: none;
@@ -167,11 +224,13 @@
   cursor: pointer;
 }
 
+/* Estilos para los enlaces del menú al pasar el cursor */
 .bookmark-menu a:hover,
 .menu-link-btn:hover {
-  color: #8b5f45;
+  color: var(--color-accent);
 }
 
+/* Tema */
 .toggle-wrap {
   position: relative;
   display: inline-block;
@@ -180,20 +239,23 @@
   cursor: pointer;
 }
 
+/* Input del tema */
 .toggle-input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
+/* Slider del tema */
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: #C7A183;
+  background: var(--color-accent);
   border-radius: 999px;
   transition: background 0.2s;
 }
 
+/* Botón del tema */
 .toggle-slider::after {
   content: '';
   position: absolute;
@@ -201,15 +263,29 @@
   height: 18px;
   left: 3px;
   top: 3px;
-  background: #5C4033;
+  background: var(--color-text);
   border-radius: 50%;
   transition: transform 0.2s;
 }
 
+/* Estilos para el botón del tema cuando está activado */
 .toggle-input:checked + .toggle-slider::after {
   transform: translateX(20px);
 }
 
+/* Estilos para el slider del tema cuando está activado */
 .toggle-input:checked + .toggle-slider {
-  background: #AD7B59;
+  background: var(--color-button);
+}
+
+/* Estilos para el selector de idioma cuando el tema está activado */
+:root[data-theme='dark'] .lang-select {
+  color: var(--color-text);
+}
+
+/* Estilos para el selector de idioma cuando el tema está activado */
+:root[data-theme='dark'] .lang-wrap {
+  border-color: rgba(216, 185, 154, 0.38);
+  background: color-mix(in srgb, var(--color-panel) 74%, #1f1612);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
 }

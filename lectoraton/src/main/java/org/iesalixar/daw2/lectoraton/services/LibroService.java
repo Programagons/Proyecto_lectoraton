@@ -58,23 +58,33 @@ public class LibroService {
         this.messageSource = messageSource;
     }
 
+    /**
+     * Obtiene todos los libros con paginación.
+     * @param pageable Parámetros de paginación.
+     * @return Página de LibroDTO.
+     */
     public Page<LibroDTO> getAllLibros(Pageable pageable) {
+        // Se obtienen todos los libros con paginación.
         return libroRepository.findAll(pageable).map(libroMapper::toDTO);
     }
 
     public Optional<LibroDTO> getLibroById(Long id) {
+        // Se obtiene el libro por id.
         return libroRepository.findById(id).map(libroMapper::toDTO);
     }
 
     public Optional<LibroDTO> getLibroByIsbn(String isbn) {
+        // Se obtiene el libro por ISBN.
         return libroRepository.findByIsbn(isbn).map(libroMapper::toDTO);
     }
 
     public Page<LibroDTO> explorar(String titulo, String autor, Long autorId, Long generoId, Long tropoId, String saga, Pageable pageable) {
+        // Se exploran los libros.
         return libroRepository.explorar(titulo, autor, autorId, generoId, tropoId, saga, pageable).map(libroMapper::toDTO);
     }
 
     public List<LibroDTO> listarNovedades(int size) {
+        // Se obtienen las novedades de los libros.
         int n = Math.min(Math.max(size, 1), 48);
         return libroRepository.findNovedades(PageRequest.of(0, n)).stream()
                 .map(libroMapper::toDTO)
@@ -82,6 +92,7 @@ public class LibroService {
     }
 
     public List<LibroDTO> listarMasLeidosPorCalificaciones(int size) {
+        // Se obtienen los libros más leidos por calificaciones.
         int n = Math.min(Math.max(size, 1), 48);
         List<Long> ids = libroRepository.findLibroIdsMasCalificaciones(n);
         if (ids.isEmpty()) {
@@ -100,15 +111,18 @@ public class LibroService {
     }
 
     public LibroDTO createLibro(LibroCreateDTO dto, Locale locale) {
+        // Se verifica si el libro ya existe.
         if (libroRepository.existsByIsbn(dto.getIsbn())) {
             String msg = messageSource.getMessage("msg.libro.isbn.existe", null, locale);
             throw new IllegalArgumentException(msg != null ? msg : "El ISBN ya existe.");
         }
+        // Se guarda la portada del libro.
         String portadaFileName = null;
         if (dto.getPortadaFile() != null && !dto.getPortadaFile().isEmpty()) {
             portadaFileName = fileStorageService.saveFile(dto.getPortadaFile());
             if (portadaFileName == null) throw new RuntimeException("Error al guardar la portada.");
         }
+        // Se crea el libro.
         Libro libro = libroMapper.toEntity(dto, portadaFileName);
         setGenerosAndTropos(libro, dto.getGeneroIds(), dto.getTropoIds());
         Libro saved = libroRepository.save(libro);
@@ -116,7 +130,15 @@ public class LibroService {
         return libroMapper.toDTO(saved);
     }
 
+    /**
+     * Actualiza un libro.
+     * @param id ID del libro.
+     * @param dto DTO del libro.
+     * @param locale Locale.
+     * @return LibroDTO.
+     */
     public LibroDTO updateLibro(Long id, LibroCreateDTO dto, Locale locale) {
+        // Se obtiene el libro existente.
         Libro existing = libroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
         if (libroRepository.existsByIsbnAndIdNot(dto.getIsbn(), id)) {
@@ -143,7 +165,10 @@ public class LibroService {
         Libro updated = libroRepository.save(existing);
         return libroMapper.toDTO(updated);
     }
-
+    /**
+     * Elimina un libro.
+     * @param id ID del libro.
+     */
     public void deleteLibro(Long id) {
         Libro libro = libroRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
         if (libro.getPortada() != null && !libro.getPortada().isEmpty()) {
@@ -153,6 +178,12 @@ public class LibroService {
         logger.info("Libro con ID {} eliminado.", id);
     }
 
+    /**
+     * Establece los géneros y tropos de un libro.
+     * @param libro Libro.
+     * @param generoIds IDs de los géneros.
+     * @param tropoIds IDs de los tropos.
+     */
     private void setGenerosAndTropos(Libro libro, Set<Long> generoIds, Set<Long> tropoIds) {
         if (generoIds != null && !generoIds.isEmpty()) {
             List<Genero> generos = generoRepository.findAllById(generoIds);

@@ -51,8 +51,12 @@ public class BibliotecaController {
     @Autowired
     private UsuarioService usuarioService;
 
+
     /**
      * Lista las bibliotecas del usuario autenticado (JWT).
+     *
+     * @param userDetails UserDetails del usuario autenticado.
+     * @return ResponseEntity con la lista de bibliotecas o error en caso de fallo.
      */
     @Operation(summary = "Mis bibliotecas", description = "Devuelve las bibliotecas del usuario que envía el token JWT")
     @ApiResponses(value = {
@@ -164,6 +168,12 @@ public class BibliotecaController {
         }
     }
 
+    /**
+     * Obtiene los libros de una biblioteca.
+     * @param id ID de la biblioteca.
+     * @param userDetails UserDetails del usuario autenticado.
+     * @return ResponseEntity con la lista de libros o error en caso de fallo.
+     */
     @Operation(summary = "Libros de una biblioteca", description = "Devuelve los libros de una biblioteca del usuario autenticado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista recuperada",
@@ -219,6 +229,13 @@ public class BibliotecaController {
         }
     }
 
+    /**
+     * Renombra una biblioteca.
+     * @param id ID de la biblioteca.
+     * @param dto DTO con los datos de la nueva biblioteca.
+     * @param userDetails UserDetails del usuario autenticado.
+     * @return ResponseEntity con la biblioteca renombrada o error en caso de fallo.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<?> renameBiblioteca(@PathVariable Long id,
                                               @Valid @RequestBody BibliotecaRenameDTO dto,
@@ -267,6 +284,13 @@ public class BibliotecaController {
         }
     }
 
+    /**
+     * Agrega un libro a una biblioteca.
+     * @param id ID de la biblioteca.
+     * @param libroId ID del libro.
+     * @param userDetails UserDetails del usuario autenticado.
+     * @return ResponseEntity con el libro agregado o error en caso de fallo.
+     */
     @PostMapping("/{id}/libros/{libroId}")
     public ResponseEntity<?> addLibroABiblioteca(@PathVariable Long id,
                                                  @PathVariable Long libroId,

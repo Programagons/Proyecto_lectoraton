@@ -4,7 +4,7 @@
   padding: 1.5rem 1rem 3rem;
   min-height: calc(100vh - 120px);
   box-sizing: border-box;
-  background: #f5eedd;
+  background: var(--color-beige-bg);
 }
 
 .comunidad-panel {
@@ -21,15 +21,15 @@
 h1 {
   margin: 0;
   text-align: center;
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-heading-stylized, 'Dancing Script', cursive);
   font-size: clamp(2rem, 5vw, 2.7rem);
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .subtitle {
   text-align: center;
   color: #7a5a44;
-  margin: 0.5rem 0 1rem;
+  margin: var(--space-sm) 0 var(--space-lg);
 }
 
 .clubs-proximo {
@@ -49,16 +49,16 @@ h1 {
 
 .tab-btn {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.45rem 0.95rem;
   background: #d7bea0;
-  color: #5c4033;
+  color: var(--color-text);
   font-weight: 700;
   cursor: pointer;
 }
 
 .tab-btn.active {
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
 }
 
@@ -71,16 +71,16 @@ h1 {
 .buscador-wrap input {
   width: min(520px, 100%);
   border: none;
-  border-radius: 999px;
-  background: #e3c7a1;
-  color: #5c4033;
+  border-radius: var(--radius-pill);
+  background: var(--color-input);
+  color: var(--color-text);
   padding: 0.65rem 1rem;
   font-size: 1rem;
 }
 
 .state-msg {
   text-align: center;
-  color: #5c4033;
+  color: var(--color-text);
 }
 
 .state-msg.error {
@@ -112,7 +112,7 @@ h1 {
 
 .usuario-main h2 {
   margin: 0;
-  color: #5c4033;
+  color: var(--color-text);
   font-size: 1.05rem;
 }
 
@@ -130,9 +130,9 @@ h1 {
 
 .btn-seguir {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.5rem 0.95rem;
-  background: #ad7b59;
+  background: var(--color-button);
   color: #fff;
   cursor: pointer;
   font-weight: 700;

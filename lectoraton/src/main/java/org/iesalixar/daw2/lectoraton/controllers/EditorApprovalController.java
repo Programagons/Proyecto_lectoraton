@@ -28,6 +28,12 @@ public class EditorApprovalController {
         this.usuarioService = usuarioService;
     }
 
+    /**
+     * Endpoint para aprobar la solicitud de editor.
+     *
+     * @param token Token de la solicitud de editor.
+     * @return ResponseEntity con el HTML de la página de aprobación o error en caso de fallo.
+     */
     @GetMapping(value = "/approve", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> approve(@RequestParam("token") String token) {
         Long usuarioId = tokenUtil.validarYUsuarioId(token);
@@ -58,6 +64,13 @@ public class EditorApprovalController {
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
+    /**
+     * Genera el HTML de la página de aprobación.
+     *
+     * @param titulo Título de la página.
+     * @param mensaje Mensaje de la página.
+     * @return HTML de la página de aprobación.
+     */
     private static String htmlPagina(String titulo, String mensaje) {
         return """
                 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>

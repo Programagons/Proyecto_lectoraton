@@ -26,6 +26,11 @@ public class TropoService {
         this.messageSource = messageSource;
     }
 
+    /**
+     * Obtiene todos los tropos ordenados por nombre.
+     *
+     * @return Lista de TropoDTO con los tropos ordenados por nombre.
+     */
     public List<TropoDTO> getAllTropos() {
         return tropoRepository.findAllByOrderByNombreAsc().stream()
                 .map(tropoMapper::toDTO)

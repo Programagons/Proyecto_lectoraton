@@ -1,13 +1,13 @@
 <footer class="app-footer">
   <div class="footer-inner d-flex flex-wrap justify-content-around align-items-center gap-3 px-4 py-3">
-    <a routerLink="/sobre-nosotros" class="footer-link text-decoration-none">Sobre Nosotros</a>
-    <a routerLink="/ayuda" class="footer-link text-decoration-none">Ayuda</a>
+    <a routerLink="/sobre-nosotros" class="footer-link text-decoration-none">{{ 'footer.about' | translate }}</a>
+    <a routerLink="/ayuda" class="footer-link text-decoration-none">{{ 'footer.help' | translate }}</a>
     <a
       href="https://x.com"
       target="_blank"
       rel="noopener noreferrer"
       class="footer-social"
-      aria-label="X (antes Twitter)"
+      [attr.aria-label]="'footer.xAriaLabel' | translate"
     >
       <!-- SVG Bootstrap Icons (twitter-x): evita depender de la fuente .woff en el bundle -->
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="footer-x-svg" viewBox="0 0 16 16" aria-hidden="true">

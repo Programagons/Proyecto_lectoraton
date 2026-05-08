@@ -55,16 +55,32 @@ public class BibliotecaService {
         this.libroMapper = libroMapper;
     }
 
-    public List<BibliotecaDTO> getByUsuarioId(Long usuarioId) {
+    /**
+     * Obtiene las bibliotecas de un usuario.
+     * @param usuarioId ID del usuario.
+     * @return Lista de BibliotecaDTO.
+     */
+    public List<BibliotecaDTO> getByUsuarioId(Long usuarioId) { 
         return bibliotecaRepository.findByUsuarioIdOrderByNombreAsc(usuarioId).stream()
                 .map(bibliotecaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Obtiene una biblioteca por su ID.
+     * @param id ID de la biblioteca.
+     * @return Optional de BibliotecaDTO.
+     */
     public Optional<BibliotecaDTO> getById(Long id) {
         return bibliotecaRepository.findById(id).map(bibliotecaMapper::toDTO);
     }
 
+    /**
+     * Obtiene los libros de una biblioteca y un usuario.
+     * @param bibliotecaId ID de la biblioteca.
+     * @param usuarioId ID del usuario.
+     * @return Lista de LibroDTO.
+     */
     public List<LibroDTO> getLibrosByBibliotecaIdAndUsuarioId(Long bibliotecaId, Long usuarioId) {
         Biblioteca biblioteca = bibliotecaRepository.findByIdAndUsuarioId(bibliotecaId, usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Biblioteca no encontrada."));
@@ -77,6 +93,11 @@ public class BibliotecaService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Crea una nueva biblioteca.
+     * @param dto DTO con los datos de la nueva biblioteca.
+     * @return BibliotecaDTO.
+     */
     public BibliotecaDTO create(BibliotecaCreateDTO dto) {
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
@@ -105,6 +126,13 @@ public class BibliotecaService {
         return bibliotecaMapper.toDTO(biblioteca);
     }
 
+    /**
+     * Renombra una biblioteca.
+     * @param id ID de la biblioteca.
+     * @param usuarioId ID del usuario.
+     * @param dto DTO con los datos de la nueva biblioteca.
+     * @return BibliotecaDTO.
+     */
     public BibliotecaDTO rename(Long id, Long usuarioId, BibliotecaRenameDTO dto) {
         Biblioteca biblioteca = bibliotecaRepository.findByIdAndUsuarioId(id, usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Biblioteca no encontrada."));
@@ -119,6 +147,11 @@ public class BibliotecaService {
         return bibliotecaMapper.toDTO(bibliotecaRepository.save(biblioteca));
     }
 
+    /**
+     * Elimina una biblioteca.
+     * @param id ID de la biblioteca.
+     * @param usuarioId ID del usuario.
+     */
     public void delete(Long id, Long usuarioId) {
         Biblioteca biblioteca = bibliotecaRepository.findByIdAndUsuarioId(id, usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Biblioteca no encontrada."));
@@ -128,6 +161,12 @@ public class BibliotecaService {
         bibliotecaRepository.delete(biblioteca);
     }
 
+    /**
+     * Agrega un libro a una biblioteca.
+     * @param bibliotecaId ID de la biblioteca.
+     * @param usuarioId ID del usuario.
+     * @param libroId ID del libro.
+     */
     public void addLibro(Long bibliotecaId, Long usuarioId, Long libroId) {
         Biblioteca biblioteca = bibliotecaRepository.findByIdAndUsuarioId(bibliotecaId, usuarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Biblioteca no encontrada."));
@@ -145,6 +184,10 @@ public class BibliotecaService {
         sincronizarEstadoLecturaSiBibliotecaEsFija(biblioteca, libro, usuarioId);
     }
 
+    /**
+     * Crea las bibliotecas fijas si faltan.
+     * @param usuario Usuario.
+     */
     public void crearBibliotecasFijasSiFaltan(Usuario usuario) {
         for (String nombre : BIBLIOTECAS_FIJAS) {
             if (!bibliotecaRepository.existsByUsuarioIdAndNombreIgnoreCase(usuario.getId(), nombre)) {
@@ -156,10 +199,21 @@ public class BibliotecaService {
         }
     }
 
+    /**
+     * Verifica si una biblioteca es fija.
+     * @param nombre Nombre de la biblioteca.
+     * @return True si es fija, false en caso contrario.
+     */
     private boolean esBibliotecaFija(String nombre) {
         return BIBLIOTECAS_FIJAS.stream().anyMatch(fija -> fija.equalsIgnoreCase(nombre));
     }
 
+    /**
+     * Sincroniza el estado de lectura si la biblioteca es fija.
+     * @param biblioteca Biblioteca.
+     * @param libro Libro.
+     * @param usuarioId ID del usuario.
+     */
     private void sincronizarEstadoLecturaSiBibliotecaEsFija(Biblioteca biblioteca, Libro libro, Long usuarioId) {
         EstadoLectura estado = getEstadoLecturaPorBiblioteca(biblioteca.getNombre());
         if (estado == null) {
@@ -179,6 +233,11 @@ public class BibliotecaService {
         usuarioLibroRepository.save(usuarioLibro);
     }
 
+    /**
+     * Obtiene el estado de lectura por el nombre de la biblioteca.
+     * @param nombreBiblioteca Nombre de la biblioteca.
+     * @return EstadoLectura.
+     */
     private EstadoLectura getEstadoLecturaPorBiblioteca(String nombreBiblioteca) {
         if ("Leyendo".equalsIgnoreCase(nombreBiblioteca)) {
             return EstadoLectura.leyendo;

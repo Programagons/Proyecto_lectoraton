@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BibliotecaDTO, BibliotecaService, LibroBibliotecaDTO } from '../../core/biblioteca/biblioteca.service';
 
 @Component({
   selector: 'app-biblioteca-detalle',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './biblioteca-detalle.html',
   styleUrl: './biblioteca-detalle.css',
 })
@@ -21,6 +22,7 @@ export class BibliotecaDetallePage implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly bibliotecaService: BibliotecaService,
+    private readonly translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +43,7 @@ export class BibliotecaDetallePage implements OnInit {
       const idParam = params.get('id');
       const bibliotecaId = Number(idParam);
       if (!idParam || Number.isNaN(bibliotecaId)) {
-        this.error.set('Biblioteca no válida.');
+        this.error.set(this.translate.instant('libraryDetail.errorInvalid'));
         this.loading.set(false);
         return;
       }
@@ -71,7 +73,7 @@ export class BibliotecaDetallePage implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar esta biblioteca.');
+        this.error.set(this.translate.instant('libraryDetail.errorLoad'));
         this.loading.set(false);
       },
     });

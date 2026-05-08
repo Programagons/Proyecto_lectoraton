@@ -9,5 +9,6 @@ public interface ComentarioRepository extends JpaRepository<Comentario, Long> {
 
     List<Comentario> findByResenaIdOrderByFechaCreacionAsc(Long resenaId);
 
+    // Para buscar comentarios de un usuario en una reseña (para notis)
     List<Comentario> findByResenaUsuarioIdAndUsuarioIdNotOrderByFechaCreacionDesc(Long usuarioId, Long actorExcluidoId);
 }

@@ -17,6 +17,11 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     Optional<Libro> findByIsbn(String isbn);
 
+    /**
+     * Obtiene un libro con sus asociaciones.
+     * @param id ID del libro.
+     * @return Libro.
+     */
     @EntityGraph(attributePaths = {"autor", "generos", "tropos"})
     @Query("SELECT l FROM Libro l WHERE l.id = :id")
     Optional<Libro> findOneWithAssociations(@Param("id") Long id);
@@ -29,6 +34,14 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     Page<Libro> findByAutorId(Long autorId, Pageable pageable);
 
+    /**
+     * Obtiene los libros similares.
+     * @param libroId ID del libro.
+     * @param generoIds IDs de los géneros.
+     * @param tropoIds IDs de los tropos.
+     * @param pageable Parámetros de paginación.
+     * @return Lista de Libro.
+     */
     @Query("""
            SELECT DISTINCT l FROM Libro l
            LEFT JOIN l.generos g
@@ -38,6 +51,17 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
            """)
     List<Libro> findSimilares(Long libroId, List<Long> generoIds, List<Long> tropoIds, Pageable pageable);
 
+    /**
+     * Obtiene los libros explorar.
+     * @param titulo Titulo del libro.
+     * @param autor Autor del libro.
+     * @param autorId ID del autor del libro.
+     * @param generoId ID del género del libro.
+     * @param tropoId ID del tropo del libro.
+     * @param saga Saga del libro.
+     * @param pageable Parámetros de paginación.
+     * @return Página de Libro.
+     */
     @Query("""
            SELECT DISTINCT l FROM Libro l
            LEFT JOIN l.generos g
@@ -57,9 +81,19 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
                          @Param("saga") String saga,
                          Pageable pageable);
 
+    /**
+     * Obtiene las novedades de los libros.
+     * @param pageable Parámetros de paginación.
+     * @return Lista de Libro.
+     */
     @Query("SELECT l FROM Libro l ORDER BY l.fechaPublicacion DESC NULLS LAST, l.id DESC")
     List<Libro> findNovedades(Pageable pageable);
 
+    /**
+     * Obtiene los libros más leidos por calificaciones.
+     * @param lim Limite de libros.
+     * @return Lista de ID de Libro.
+     */
     @Query(value = "SELECT libro_id FROM usuarios_libros WHERE calificacion IS NOT NULL GROUP BY libro_id ORDER BY COUNT(*) DESC LIMIT :lim", nativeQuery = true)
     List<Long> findLibroIdsMasCalificaciones(@Param("lim") int lim);
 }

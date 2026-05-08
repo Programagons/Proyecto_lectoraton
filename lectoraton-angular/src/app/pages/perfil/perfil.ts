@@ -2,23 +2,28 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { UsuarioPerfilDTO, UsuarioService } from '../../core/usuario/usuario.service';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
+
 export class PerfilPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly perfil = signal<UsuarioPerfilDTO | null>(null);
   protected readonly editandoBio = signal(false);
   protected readonly guardandoBio = signal(false);
+  protected readonly subiendoIcono = signal(false);
   protected readonly bioError = signal<string | null>(null);
   protected readonly bioOk = signal<string | null>(null);
+  protected readonly iconoError = signal<string | null>(null);
   protected bioTemporal = '';
+  protected iconoTemporal: File | null = null;
 
   protected readonly solicitudEnviando = signal(false);
   protected readonly solicitudMsg = signal<string | null>(null);
@@ -33,34 +38,41 @@ export class PerfilPage implements OnInit {
     return !r.includes('Editor') && !r.includes('Administrador');
   });
 
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private readonly translate: TranslateService,
+  ) {}
 
+  /* Inicialización de la página */
   ngOnInit(): void {
     this.usuarioService.getMiPerfil().subscribe({
       next: (perfil) => {
         this.perfil.set(perfil);
-        this.bioTemporal = perfil.bio || '';
+        this.bioTemporal = perfil.bio ?? '';
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudo cargar tu perfil.');
+        this.error.set(this.translate.instant('profile.errorLoad'));
         this.loading.set(false);
       },
     });
   }
 
+  /* Método para iniciar la edición de la biografía */
   protected iniciarEdicionBio(): void {
     this.bioError.set(null);
     this.bioOk.set(null);
-    this.bioTemporal = this.perfil()?.bio || '';
+    this.bioTemporal = this.perfil()?.bio ?? '';
     this.editandoBio.set(true);
   }
 
+  /* Método para cancelar la edición de la biografía */
   protected cancelarEdicionBio(): void {
     this.editandoBio.set(false);
-    this.bioTemporal = this.perfil()?.bio || '';
+    this.bioTemporal = this.perfil()?.bio ?? '';
   }
 
+  /* Método para guardar la biografía */
   protected guardarBio(): void {
     this.guardandoBio.set(true);
     this.bioError.set(null);
@@ -70,16 +82,48 @@ export class PerfilPage implements OnInit {
         this.perfil.set(perfil);
         this.editandoBio.set(false);
         this.guardandoBio.set(false);
-        this.bioOk.set('Biografía actualizada.');
+        this.bioOk.set(this.translate.instant('profile.bioUpdated'));
       },
       error: (err: HttpErrorResponse) => {
         this.guardandoBio.set(false);
         const body = err.error as string | { message?: string } | undefined;
-        this.bioError.set(typeof body === 'string' ? body : body?.message || 'No se pudo actualizar la biografía.');
+        this.bioError.set(typeof body === 'string' ? body : body?.message || this.translate.instant('profile.errorBioUpdate'));
       },
     });
   }
 
+  /* Método para seleccionar el icono */
+  protected onIconoSeleccionado(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    this.iconoTemporal = input.files?.[0] ?? null;
+    this.iconoError.set(null);
+  }
+
+  /* Método para subir el icono */
+  protected subirIcono(): void {
+    if (!this.iconoTemporal) {
+      this.iconoError.set(this.translate.instant('profile.selectImageFirst'));
+      return;
+    }
+    this.subiendoIcono.set(true);
+    this.iconoError.set(null);
+    this.bioOk.set(null);
+    this.usuarioService.updateMiIcono(this.iconoTemporal).subscribe({
+      next: (perfil) => {
+        this.perfil.set(perfil);
+        this.subiendoIcono.set(false);
+        this.iconoTemporal = null;
+        this.bioOk.set(this.translate.instant('profile.photoUpdated'));
+      },
+      error: (err: HttpErrorResponse) => {
+        this.subiendoIcono.set(false);
+        const body = err.error as string | { message?: string } | undefined;
+        this.iconoError.set(typeof body === 'string' ? body : body?.message || this.translate.instant('profile.errorPhotoUpdate'));
+      },
+    });
+  }
+
+  /* Método para solicitar ser editor */
   protected solicitarEditor(): void {
     this.solicitudMsg.set(null);
     this.solicitudError.set(false);
@@ -88,7 +132,7 @@ export class PerfilPage implements OnInit {
       next: (msg) => {
         this.solicitudEnviando.set(false);
         this.solicitudError.set(false);
-        this.solicitudMsg.set(msg || 'Solicitud enviada.');
+        this.solicitudMsg.set(msg || this.translate.instant('profile.requestSent'));
       },
       error: (err: HttpErrorResponse) => {
         this.solicitudEnviando.set(false);
@@ -97,7 +141,7 @@ export class PerfilPage implements OnInit {
         const msg =
           typeof body === 'string' && body.trim()
             ? body
-            : 'No se pudo enviar la solicitud. Configura MAIL_USER y MAIL_PASS en el backend (Gmail: contraseña de aplicación).';
+            : this.translate.instant('profile.errorRequestEditor');
         this.solicitudMsg.set(msg);
       },
     });

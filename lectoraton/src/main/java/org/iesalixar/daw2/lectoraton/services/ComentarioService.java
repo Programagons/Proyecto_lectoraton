@@ -40,6 +40,12 @@ public class ComentarioService {
         this.actividadUsuarioService = actividadUsuarioService;
     }
 
+    /**
+     * Obtiene los comentarios de una reseña.
+     *
+     * @param resenaId ID de la reseña.
+     * @return Lista de ComentarioDTO con los comentarios de la reseña.
+     */
     public List<ComentarioDTO> getByResenaId(Long resenaId) {
         return comentarioRepository.findByResenaIdOrderByFechaCreacionAsc(resenaId).stream()
                 .map(comentarioMapper::toDTO)
@@ -50,6 +56,13 @@ public class ComentarioService {
         return comentarioRepository.findById(id).map(comentarioMapper::toDTO);
     }
 
+    /**
+     * Crea un nuevo comentario.
+     *
+     * @param dto Datos del comentario a crear.
+     * @return ComentarioDTO del comentario creado.
+     * @throws IllegalArgumentException si la reseña o el usuario no existen.
+     */
     public ComentarioDTO create(ComentarioCreateDTO dto) {
         Resena resena = resenaRepository.findById(dto.getResenaId())
                 .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada."));

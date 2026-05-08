@@ -1,3 +1,4 @@
+// Definición central de rutas SPA y control de acceso por rol.
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { editorGuard } from './core/auth/editor.guard';

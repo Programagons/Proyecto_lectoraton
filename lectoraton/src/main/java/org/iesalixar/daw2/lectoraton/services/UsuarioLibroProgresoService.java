@@ -36,36 +36,49 @@ public class UsuarioLibroProgresoService {
         this.actividadUsuarioService = actividadUsuarioService;
     }
 
-    @Transactional
+    /**
+     * Actualiza el progreso de lectura de un libro.
+     * @param libroId ID del libro.
+     * @param usuarioId ID del usuario.
+     * @param body DTO con los datos para actualizar el progreso de lectura.
+     * @return ProgresoLecturaDTO.
+     */
+    @Transactional 
     public ProgresoLecturaDTO actualizar(Long libroId, Long usuarioId, ProgresoLecturaUpdateDTO body) {
-        Libro libro = libroRepository.findById(libroId)
+        Libro libro = libroRepository.findById(libroId) // Se obtiene el libro.
                 .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
-        if (!usuarioRepository.existsById(usuarioId)) {
+        if (!usuarioRepository.existsById(usuarioId)) { // Se verifica si el usuario existe.
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
 
-        int pagina = body.getPaginaActual();
+        int pagina = body.getPaginaActual(); // Se obtiene la página actual.
         Integer numPaginas = libro.getNumPaginas();
-        if (numPaginas != null && numPaginas > 0 && pagina > numPaginas) {
+        if (numPaginas != null && numPaginas > 0 && pagina > numPaginas) { // Se verifica si la página actual es válida.
             throw new IllegalArgumentException("La página actual no puede superar el total de páginas del libro (" + numPaginas + ").");
         }
 
-        EstadoLectura estado = resolverEstado(pagina, numPaginas, body.getEstado());
+        EstadoLectura estado = resolverEstado(pagina, numPaginas, body.getEstado()); // Se resuelve el estado de lectura.
 
-        UsuarioLibro ul = usuarioLibroRepository.findByUsuarioIdAndLibroId(usuarioId, libroId)
+        UsuarioLibro ul = usuarioLibroRepository.findByUsuarioIdAndLibroId(usuarioId, libroId) // Se obtiene el usuario libro.
                 .orElseGet(() -> crearVacio(usuarioId, libro));
 
-        ul.setPaginaActual(pagina);
-        ul.setEstado(estado);
-        ul.setFechaActualizacion(LocalDateTime.now());
+        ul.setPaginaActual(pagina); // Se actualiza la página actual.
+        ul.setEstado(estado); // Se actualiza el estado de lectura.
+        ul.setFechaActualizacion(LocalDateTime.now()); // Se actualiza la fecha de actualización.
 
-        usuarioLibroRepository.save(ul);
+        usuarioLibroRepository.save(ul); // Se guarda el usuario libro.
         ProgresoLecturaDTO dto = toDto(ul, libro);
-        Usuario actor = usuarioRepository.getReferenceById(usuarioId);
-        actividadUsuarioService.registrarProgresoLectura(actor, libro, dto);
+        Usuario actor = usuarioRepository.getReferenceById(usuarioId); // Se obtiene el usuario.    
+        actividadUsuarioService.registrarProgresoLectura(actor, libro, dto); // Se registra el progreso de lectura.
         return dto;
     }
 
+    /**
+     * Convierte un usuario libro a un DTO de progreso de lectura.
+     * @param ul Usuario libro.
+     * @param libro Libro.
+     * @return ProgresoLecturaDTO.
+     */
     public static ProgresoLecturaDTO toDto(UsuarioLibro ul, Libro libro) {
         ProgresoLecturaDTO dto = new ProgresoLecturaDTO();
         int pag = ul.getPaginaActual() != null ? ul.getPaginaActual() : 0;
@@ -88,6 +101,12 @@ public class UsuarioLibroProgresoService {
         return dto;
     }
 
+    /**
+     * Calcula el porcentaje de progreso de lectura.
+     * @param paginaActual Página actual.
+     * @param numPaginas Total de páginas.
+     * @return Porcentaje de progreso de lectura.
+     */
     private static double calcularPorcentaje(int paginaActual, Integer numPaginas) {
         if (numPaginas == null || numPaginas <= 0) {
             return 0.0;
@@ -96,6 +115,13 @@ public class UsuarioLibroProgresoService {
         return Math.round(raw * 10.0) / 10.0;
     }
 
+    /**
+     * Resuelve el estado de lectura.
+     * @param paginaActual Página actual.
+     * @param numPaginas Total de páginas.
+     * @param estadoRaw Estado de lectura.
+     * @return Estado de lectura.
+     */
     private EstadoLectura resolverEstado(int paginaActual, Integer numPaginas, String estadoRaw) {
         String s = estadoRaw == null ? "" : estadoRaw.trim();
         if (!s.isEmpty()) {
@@ -114,6 +140,12 @@ public class UsuarioLibroProgresoService {
         return EstadoLectura.quiero_leer;
     }
 
+    /**
+     * Crea un usuario libro vacío.
+     * @param usuarioId ID del usuario.
+     * @param libro Libro.
+     * @return Usuario libro.
+     */
     private UsuarioLibro crearVacio(Long usuarioId, Libro libro) {
         UsuarioLibro nuevo = new UsuarioLibro();
         nuevo.setId(new UsuarioLibroId(usuarioId, libro.getId()));
@@ -126,6 +158,8 @@ public class UsuarioLibroProgresoService {
 
     /**
      * Último libro en el que el usuario guardó progreso ({@code fecha_actualizacion} no nula).
+     * @param usuarioId ID del usuario.
+     * @return UltimoProgresoLibroDTO.
      */
     @Transactional(readOnly = true)
     public UltimoProgresoLibroDTO getUltimoActualizado(Long usuarioId) {

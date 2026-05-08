@@ -1,17 +1,17 @@
 <div class="detalle-page">
   <div class="detalle-panel">
     <div class="detalle-cabecera">
-      <a routerLink="/bibliotecas" class="link-back">← Volver a bibliotecas</a>
-      <button type="button" class="btn-selector" (click)="abrirSelector()">Cambiar de biblioteca</button>
+      <a routerLink="/bibliotecas" class="link-back">← {{ 'libraryDetail.backToLibraries' | translate }}</a>
+      <button type="button" class="btn-selector" (click)="abrirSelector()">{{ 'libraryDetail.switchLibrary' | translate }}</button>
       <h1>{{ nombreBiblioteca() }}</h1>
     </div>
 
     @if (loading()) {
-      <p class="state-msg">Cargando…</p>
+      <p class="state-msg">{{ 'common.loading' | translate }}</p>
     } @else if (error()) {
       <p class="state-msg error" role="alert">{{ error() }}</p>
     } @else if (libros().length === 0) {
-      <p class="state-msg">Esta biblioteca no tiene libros todavía.</p>
+      <p class="state-msg">{{ 'libraryDetail.empty' | translate }}</p>
     } @else {
       <div class="grid-libros">
         @for (libro of libros(); track libro.id) {
@@ -20,11 +20,11 @@
               @if (libro.portada) {
                 <img [src]="libro.portada" [alt]="'Portada de ' + libro.titulo" class="portada-img" loading="lazy" />
               } @else {
-                <div class="portada-placeholder">Sin portada</div>
+                <div class="portada-placeholder">{{ 'libraryDetail.noCover' | translate }}</div>
               }
             </div>
             <h2>{{ libro.titulo }}</h2>
-            <p>{{ libro.autorNombre || 'Autor desconocido' }}</p>
+            <p>{{ libro.autorNombre || ('explore.unknownAuthor' | translate) }}</p>
           </a>
         }
       </div>
@@ -34,8 +34,8 @@
   @if (showSelector()) {
     <div class="selector-backdrop" (click)="cerrarSelector()">
       <aside class="selector-panel" (click)="$event.stopPropagation()">
-        <h2>Tus bibliotecas</h2>
-        <p>Pulsa una para cambiar rápido.</p>
+        <h2>{{ 'libraryDetail.yourLibraries' | translate }}</h2>
+        <p>{{ 'libraryDetail.pickQuick' | translate }}</p>
         <div class="selector-lista">
           @for (b of bibliotecas(); track b.id) {
             <a

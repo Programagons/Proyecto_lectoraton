@@ -129,16 +129,27 @@ public class LibroController {
         return "libro-form";
     }
 
+    /**
+     * Obtiene el último progreso de lectura del usuario.
+     *
+     * @param userDetails Detalles del usuario autenticado.
+     * @return ResponseEntity con el último progreso de lectura o mensaje de error si no existe.
+     */
     @GetMapping("/mi/ultimo-progreso")
     public ResponseEntity<UltimoProgresoLibroDTO> getMiUltimoProgreso(@AuthenticationPrincipal UserDetails userDetails) {
+        // Se verifica si el usuario está autenticado.
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        // Se obtiene el ID del usuario.
         Long usuarioId = usuarioService.getIdByUsername(userDetails.getUsername());
+        // Se obtiene el último progreso de lectura del usuario.
         UltimoProgresoLibroDTO dto = usuarioLibroProgresoService.getUltimoActualizado(usuarioId);
+        // Se verifica si el último progreso de lectura es null.
         if (dto == null) {
             return ResponseEntity.noContent().build();
         }
+        // Se devuelve el último progreso de lectura.
         return ResponseEntity.ok(dto);
     }
 
@@ -173,8 +184,15 @@ public class LibroController {
         }
     }
 
+    /**
+     * Obtiene una recomendación de libro.
+     *
+     * @param id ID del libro solicitado.
+     * @return ResponseEntity con la recomendación de libro o mensaje de error si no existe.
+     */
     @GetMapping("/{id}/recomendacion")
     public ResponseEntity<LibroRecomendacionDTO> getRecomendacion(@PathVariable Long id) {
+        // Se obtiene la recomendación de libro.
         try {
             return ResponseEntity.ok(libroRecomendacionService.recomendar(id));
         } catch (IllegalArgumentException e) {
@@ -182,21 +200,41 @@ public class LibroController {
         }
     }
 
+    /**
+     * Obtiene el detalle de un libro.
+     *
+     * @param id ID del libro solicitado.
+     * @param userDetails Detalles del usuario autenticado.
+     * @return ResponseEntity con el detalle de libro o mensaje de error si no existe.
+     */
     @GetMapping("/{id}/detalle")
     public ResponseEntity<?> getLibroDetalle(@PathVariable Long id,
                                              @AuthenticationPrincipal UserDetails userDetails) {
+        // Se verifica si el usuario está autenticado.
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        // Se obtiene el ID del usuario.
         Long usuarioId = usuarioService.getIdByUsername(userDetails.getUsername());
         try {
+            // Se obtiene el detalle del libro.
             LibroDetalleDTO dto = libroDetalleService.getDetalle(id, usuarioId);
+            // Se devuelve el detalle del libro.
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
+            // Se devuelve el mensaje de error.
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
+    /**
+     * Actualiza el progreso de lectura de un libro.
+     *
+     * @param id ID del libro solicitado.
+     * @param body DTO con los datos para actualizar el progreso de lectura.
+     * @param userDetails Detalles del usuario autenticado.
+     * @return ResponseEntity con el progreso de lectura actualizado o mensaje de error si no existe.
+     */
     @PutMapping("/{id}/progreso")
     public ResponseEntity<?> putProgresoLectura(@PathVariable Long id,
                                                 @Valid @RequestBody ProgresoLecturaUpdateDTO body,
@@ -213,6 +251,15 @@ public class LibroController {
         }
     }
 
+    /**
+     * Obtiene las reseñas de un libro.
+     *
+     * @param id ID del libro solicitado.
+     * @param q Texto de búsqueda.
+     * @param userDetails Detalles del usuario autenticado.
+     * @param pageable Parámetros de paginación.
+     * @return ResponseEntity con las reseñas de libro o mensaje de error si no existe.
+     */
     @GetMapping("/{id}/resenas")
     public ResponseEntity<Page<ResenaDTO>> getResenasLibroConBusqueda(@PathVariable Long id,
                                                                        @RequestParam(value = "q", required = false) String q,
@@ -225,6 +272,13 @@ public class LibroController {
         return ResponseEntity.ok(resenaService.buscarEnLibro(id, q, pageable, usuarioId));
     }
 
+    /**
+     * Like a una reseña.
+     *
+     * @param resenaId ID de la reseña solicitada.
+     * @param userDetails Detalles del usuario autenticado.
+     * @return ResponseEntity con la reseña actualizada o mensaje de error si no existe.
+     */
     @PostMapping("/resenas/{resenaId}/like")
     public ResponseEntity<?> toggleLikeResena(@PathVariable Long resenaId,
                                               @AuthenticationPrincipal UserDetails userDetails) {
@@ -239,6 +293,18 @@ public class LibroController {
         }
     }
 
+    /**
+     * Explora los libros.
+     *
+     * @param titulo Titulo del libro.
+     * @param autor Autor del libro.
+     * @param autorId ID del autor del libro.
+     * @param generoId ID del género del libro.
+     * @param tropoId ID del tropo del libro.
+     * @param saga Saga del libro.
+     * @param pageable Parámetros de paginación.
+     * @return ResponseEntity con la página de libros o mensaje de error si no existe.
+     */
     @GetMapping("/explorar")
     public ResponseEntity<Page<LibroDTO>> explorarLibros(@RequestParam(value = "titulo", required = false) String titulo,
                                                          @RequestParam(value = "autor", required = false) String autor,
@@ -250,11 +316,23 @@ public class LibroController {
         return ResponseEntity.ok(libroService.explorar(titulo, autor, autorId, generoId, tropoId, saga, pageable));
     }
 
+    /**
+     * Obtiene las novedades de los libros.
+     *
+     * @param size Tamaño de la página.
+     * @return ResponseEntity con las novedades de los libros o mensaje de error si no existe.
+     */
     @GetMapping("/novedades")
     public ResponseEntity<List<LibroDTO>> novedades(@RequestParam(value = "size", defaultValue = "12") int size) {
         return ResponseEntity.ok(libroService.listarNovedades(size));
     }
 
+    /**
+     * Obtiene los libros más leidos.
+     *
+     * @param size Tamaño de la página.
+     * @return ResponseEntity con los libros más leidos o mensaje de error si no existe.
+     */
     @GetMapping("/mas-leidos")
     public ResponseEntity<List<LibroDTO>> masLeidos(@RequestParam(value = "size", defaultValue = "12") int size) {
         return ResponseEntity.ok(libroService.listarMasLeidosPorCalificaciones(size));
