@@ -1,4 +1,4 @@
--- Tablas dependientes de otras (muchas FK)
+-- Tablas dependientes de otras
 DROP TABLE IF EXISTS usuarios_seguidores;
 DROP TABLE IF EXISTS bibliotecas_libros;
 DROP TABLE IF EXISTS likes_resenas;
@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS libros_generos;
 DROP TABLE IF EXISTS usuarios_roles;
 
 
--- Tablas independientes o “padre” de otras
+-- Tablas independientes
 DROP TABLE IF EXISTS bibliotecas;
 DROP TABLE IF EXISTS tropos;
 DROP TABLE IF EXISTS generos;

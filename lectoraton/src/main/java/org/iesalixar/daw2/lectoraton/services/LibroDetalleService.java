@@ -83,20 +83,22 @@ public class LibroDetalleService {
      */
     private ResenaResumenDTO buildResumen(Long libroId) {
         ResenaResumenDTO resumen = new ResenaResumenDTO();
-        Double media = usuarioLibroRepository.averageCalificacionByLibroId(libroId);
-        long totalCalificaciones = usuarioLibroRepository.countByLibroIdAndCalificacionIsNotNull(libroId);
+        Double media = resenaRepository.averageCalificacionByLibroId(libroId);
+        long totalCalificaciones = resenaRepository.countByLibroIdAndCalificacionIsNotNull(libroId);
         long totalResenas = resenaRepository.countByLibroId(libroId);
 
         Map<Integer, Long> dist = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             dist.put(i, 0L);
         }
-        List<UsuarioLibro> valoraciones = usuarioLibroRepository.findAll().stream()
-                .filter(ul -> ul.getLibro() != null && libroId.equals(ul.getLibro().getId()))
-                .filter(ul -> ul.getCalificacion() != null)
-                .toList();
-        for (UsuarioLibro ul : valoraciones) {
-            dist.computeIfPresent(ul.getCalificacion(), (k, v) -> v + 1);
+
+        List<Object[]> distribucion = resenaRepository.distribucionCalificacionesByLibroId(libroId);
+        for (Object[] fila : distribucion) {
+            Integer estrella = (Integer) fila[0];
+            Long total = (Long) fila[1];
+            if (estrella != null && total != null) {
+                dist.put(estrella, total);
+            }
         }
 
         resumen.setMediaCalificaciones(media == null ? 0.0 : media);

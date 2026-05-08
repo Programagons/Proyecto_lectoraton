@@ -230,52 +230,47 @@
   color: var(--color-accent);
 }
 
-/* Tema */
-.toggle-wrap {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-  cursor: pointer;
-}
-
-/* Input del tema */
-.toggle-input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Slider del tema */
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: var(--color-accent);
+/* Botón de tema con iconos de sol/luna */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--color-panel-border) 70%, transparent);
+  background: color-mix(in srgb, var(--color-panel) 82%, transparent);
   border-radius: 999px;
-  transition: background 0.2s;
+  padding: 0.2rem 0.45rem;
+  cursor: pointer;
+  color: var(--color-text);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* Botón del tema */
-.toggle-slider::after {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 3px;
-  top: 3px;
-  background: var(--color-text);
-  border-radius: 50%;
-  transition: transform 0.2s;
+.theme-toggle-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 60%, #fff);
+  outline-offset: 2px;
 }
 
-/* Estilos para el botón del tema cuando está activado */
-.toggle-input:checked + .toggle-slider::after {
-  transform: translateX(20px);
+.theme-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+  opacity: 0.45;
+  transform: scale(0.9);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
-/* Estilos para el slider del tema cuando está activado */
-.toggle-input:checked + .toggle-slider {
-  background: var(--color-button);
+.theme-icon.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.theme-icon.sun.active {
+  color: #d18d2a;
+}
+
+.theme-icon.moon.active {
+  color: #7f7adf;
 }
 
 /* Estilos para el selector de idioma cuando el tema está activado */
@@ -285,6 +280,12 @@
 
 /* Estilos para el selector de idioma cuando el tema está activado */
 :root[data-theme='dark'] .lang-wrap {
+  border-color: rgba(216, 185, 154, 0.38);
+  background: color-mix(in srgb, var(--color-panel) 74%, #1f1612);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-theme='dark'] .theme-toggle-btn {
   border-color: rgba(216, 185, 154, 0.38);
   background: color-mix(in srgb, var(--color-panel) 74%, #1f1612);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);

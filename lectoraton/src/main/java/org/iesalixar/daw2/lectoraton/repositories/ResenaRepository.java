@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,21 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
     Optional<Resena> findByUsuarioIdAndLibroId(Long usuarioId, Long libroId);
 
     long countByLibroId(Long libroId);
+
+    @Query("SELECT AVG(r.calificacion) FROM Resena r WHERE r.libro.id = :libroId AND r.calificacion IS NOT NULL")
+    Double averageCalificacionByLibroId(@Param("libroId") Long libroId);
+
+    @Query("SELECT COUNT(r) FROM Resena r WHERE r.libro.id = :libroId AND r.calificacion IS NOT NULL")
+    long countByLibroIdAndCalificacionIsNotNull(@Param("libroId") Long libroId);
+
+    @Query("""
+            SELECT r.calificacion AS estrella, COUNT(r) AS total
+            FROM Resena r
+            WHERE r.libro.id = :libroId
+              AND r.calificacion IS NOT NULL
+            GROUP BY r.calificacion
+            """)
+    List<Object[]> distribucionCalificacionesByLibroId(@Param("libroId") Long libroId);
 
     List<Resena> findByUsuarioIdAndUsuariosQueDieronLikeIdNot(Long usuarioId, Long actorExcluidoId);
 }

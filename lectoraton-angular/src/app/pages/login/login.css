@@ -4,11 +4,11 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: #F5EEDD;
+  background: var(--color-beige-bg);
 }
 
 .login-card {
-  background: #F5EEDD;
+  background: var(--color-beige-bg);
   max-width: 400px;
   width: 100%;
   display: flex;
@@ -39,7 +39,7 @@
 
 .login-form h2 {
   margin: 0;
-  color: #5C4033;
+  color: var(--color-text);
   text-align: center;
 }
 
@@ -75,7 +75,7 @@
 
 .field label {
   font-size: 0.95rem;
-  color: #5C4033;
+  color: var(--color-text);
   font-weight: 500;
 }
 
@@ -86,14 +86,14 @@
   padding: 0.65rem 0.9rem;
   border: none;
   border-radius: 12px;
-  background: #E3C7A1;
-  color: #5C4033;
+  background: var(--color-input);
+  color: var(--color-text);
   font-size: 1rem;
   box-sizing: border-box;
 }
 
 .field input::placeholder {
-  color: #8B7355;
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
   opacity: 0.8;
 }
 
@@ -114,14 +114,14 @@
   border: none;
   padding: 0.25rem;
   cursor: pointer;
-  color: #5C4033;
+  color: var(--color-text);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .toggle-password:hover {
-  color: #3d2b20;
+  color: var(--color-text-dark);
 }
 
 .checkbox-label {
@@ -130,14 +130,14 @@
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.95rem;
-  color: #5C4033;
+  color: var(--color-text);
   user-select: none;
 }
 
 .checkbox-label input[type="checkbox"] {
   width: 1.1rem;
   height: 1.1rem;
-  accent-color: #C7A183;
+  accent-color: var(--color-accent);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -156,7 +156,7 @@
 }
 
 .btn-primary {
-  background: #AD7B59;
+  background: var(--color-button);
   color: white;
   margin-top: 0.25rem;
   box-shadow: 0 2px 8px rgba(173, 123, 89, 0.35);
@@ -168,7 +168,7 @@
 }
 
 .btn-secondary {
-  background: #AD7B59;
+  background: var(--color-button);
   color: white;
   box-shadow: 0 2px 8px rgba(173, 123, 89, 0.35);
 }
@@ -206,25 +206,36 @@
 }
 
 .login-links .link {
-  color: #5C4033;
+  color: var(--color-text);
   font-size: 0.9rem;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .login-links .link:hover {
-  color: #3d2b20;
+  color: var(--color-text-dark);
 }
 
 .register-section {
   margin-top: 1.25rem;
   padding-top: 1.25rem;
-  border-top: 1px solid rgba(92, 64, 51, 0.2);
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 22%, transparent);
   text-align: center;
 }
 
 .register-section p {
   margin: 0 0 0.75rem;
-  color: #5C4033;
+  color: var(--color-text);
   font-size: 0.95rem;
+}
+
+/* Ajuste dedicado para que el login/registro se vea bien en tema oscuro */
+:root[data-theme='dark'] .btn-google-link {
+  border-color: rgba(216, 185, 154, 0.35);
+  background: #3f2e24;
+  color: var(--color-text);
+}
+
+:root[data-theme='dark'] .btn-google-link:hover {
+  background: #4a372c;
 }

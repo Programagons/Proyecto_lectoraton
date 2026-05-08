@@ -59,9 +59,9 @@
         </div>
       }
     </div>
-    <label class="toggle-wrap" [attr.aria-label]="'header.toggleTheme' | translate">
-      <input type="checkbox" class="toggle-input" [checked]="darkMode()" (change)="toggleDarkMode()" />
-      <span class="toggle-slider"></span>
-    </label>
+    <button type="button" class="theme-toggle-btn" [attr.aria-label]="'header.toggleTheme' | translate" (click)="toggleDarkMode()">
+      <span class="theme-icon sun" [class.active]="!darkMode()" aria-hidden="true">☀</span>
+      <span class="theme-icon moon" [class.active]="darkMode()" aria-hidden="true">☾</span>
+    </button>
   </div>
 </header>
