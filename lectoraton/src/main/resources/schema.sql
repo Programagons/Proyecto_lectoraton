@@ -1,24 +1,24 @@
 -- Tablas dependientes de otras
-DROP TABLE IF EXISTS usuarios_seguidores;
-DROP TABLE IF EXISTS bibliotecas_libros;
-DROP TABLE IF EXISTS likes_resenas;
-DROP TABLE IF EXISTS actividad_usuario;
-DROP TABLE IF EXISTS comentarios;
-DROP TABLE IF EXISTS resenas;
-DROP TABLE IF EXISTS usuarios_libros;
-DROP TABLE IF EXISTS libros_tropos;
-DROP TABLE IF EXISTS libros_generos;
-DROP TABLE IF EXISTS usuarios_roles;
+--DROP TABLE IF EXISTS usuarios_seguidores;
+--DROP TABLE IF EXISTS bibliotecas_libros;
+--DROP TABLE IF EXISTS likes_resenas;
+--DROP TABLE IF EXISTS actividad_usuario;
+--DROP TABLE IF EXISTS comentarios;
+--DROP TABLE IF EXISTS resenas;
+--DROP TABLE IF EXISTS usuarios_libros;
+--DROP TABLE IF EXISTS libros_tropos;
+--DROP TABLE IF EXISTS libros_generos;
+--DROP TABLE IF EXISTS usuarios_roles;
 
 
 -- Tablas independientes
-DROP TABLE IF EXISTS bibliotecas;
-DROP TABLE IF EXISTS tropos;
-DROP TABLE IF EXISTS generos;
-DROP TABLE IF EXISTS libros;
-DROP TABLE IF EXISTS autores;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS usuarios;
+--DROP TABLE IF EXISTS bibliotecas;
+--DROP TABLE IF EXISTS tropos;
+--DROP TABLE IF EXISTS generos;
+--DROP TABLE IF EXISTS libros;
+--DROP TABLE IF EXISTS autores;
+--DROP TABLE IF EXISTS roles;
+--DROP TABLE IF EXISTS usuarios;
 
 
 -- USUARIOS

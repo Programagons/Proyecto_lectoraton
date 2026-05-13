@@ -62,7 +62,7 @@ public class UserController {
         }
         try {
             usuarioService.solicitarRolEditor(id);
-            return ResponseEntity.ok("Solicitud enviada. Revisa tu correo de administrador para aprobarla.");
+            return ResponseEntity.ok("Solicitud enviada. Te avisaremos por correo con cualquier novedad.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IllegalStateException e) {
