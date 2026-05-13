@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -174,15 +175,27 @@ public class ComentarioController {
     @Operation(summary = "Eliminar un comentario", description = "Permite eliminar un comentario específico en la base de datos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comentario eliminado exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No tienes permiso para eliminar este comentario"),
             @ApiResponse(responseCode = "404", description = "Comentario no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteComentario(@PathVariable Long id) {
+    public ResponseEntity<?> deleteComentario(@PathVariable Long id,
+                                              @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long usuarioId = comentarioService.getUsuarioIdAutenticado(userDetails.getUsername());
+        boolean esAdmin = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> "Admin".equalsIgnoreCase(a));
         logger.info("Eliminando comentario con ID {}", id);
         try {
-            comentarioService.delete(id);
+            comentarioService.deleteConPermiso(id, usuarioId, esAdmin);
             return ResponseEntity.ok("Comentario eliminado con éxito.");
+        } catch (IllegalStateException e) {
+            logger.warn("Sin permiso para eliminar comentario con ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.warn("Error al eliminar el comentario con ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

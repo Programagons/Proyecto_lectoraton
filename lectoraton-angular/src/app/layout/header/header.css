@@ -78,6 +78,25 @@
   font-size: 0.95rem;
 }
 
+.nav-link-disabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: not-allowed;
+  user-select: none;
+  opacity: 0.78;
+}
+
+.nav-link-disabled small {
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 52%, transparent);
+}
+
 /* Estilos para los enlaces de navegación al pasar el cursor y cuando están activos */
 .nav-links a:hover,
 .nav-links a.active {

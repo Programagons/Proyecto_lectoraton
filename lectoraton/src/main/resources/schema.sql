@@ -254,7 +254,7 @@ CREATE TABLE bibliotecas_libros
     FOREIGN KEY (libro_id) REFERENCES libros (id) ON DELETE CASCADE
 );
 
--- INDICES (RENDIMIENTO)
+-- INDICES
 
 CREATE INDEX idx_libros_autor
     ON libros (autor_id);
@@ -277,8 +277,3 @@ CREATE INDEX idx_actividad_usuario_fecha
 CREATE INDEX idx_actividad_usuario_actor
     ON actividad_usuario (usuario_actor_id);
 
--- Para no olvidarme
--- Las calificaciones las podríamos calcular rollo:
--- SELECT AVG(calificacion)
--- FROM usuarios_libros
--- WHERE libro_id = 10;

@@ -57,6 +57,9 @@ export class AuthService {
     return r.includes('Editor') || r.includes('Admin');
   });
 
+  /** Rol administrador (moderación) */
+  readonly isAdmin = computed(() => this.jwtRoles().includes('Admin'));
+
   constructor(private readonly http: HttpClient) {}
 
   // Lee el token del almacenamiento local o sesión.

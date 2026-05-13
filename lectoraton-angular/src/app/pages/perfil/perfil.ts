@@ -3,6 +3,7 @@ import { UsuarioPerfilDTO, UsuarioService } from '../../core/usuario/usuario.ser
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../environments/environments';
 
 @Component({
   selector: 'app-perfil',
@@ -24,6 +25,7 @@ export class PerfilPage implements OnInit {
   protected readonly iconoError = signal<string | null>(null);
   protected bioTemporal = '';
   protected iconoTemporal: File | null = null;
+  private readonly publicBaseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
 
   protected readonly solicitudEnviando = signal(false);
   protected readonly solicitudMsg = signal<string | null>(null);
@@ -97,6 +99,19 @@ export class PerfilPage implements OnInit {
     const input = ev.target as HTMLInputElement;
     this.iconoTemporal = input.files?.[0] ?? null;
     this.iconoError.set(null);
+  }
+
+  protected iconoUrl(icono: string | null | undefined): string {
+    if (!icono) {
+      return '';
+    }
+    if (icono.startsWith('http://') || icono.startsWith('https://')) {
+      return icono;
+    }
+    if (icono.startsWith('/uploads/')) {
+      return `${this.publicBaseUrl}${icono}`;
+    }
+    return icono;
   }
 
   /* Método para subir el icono */

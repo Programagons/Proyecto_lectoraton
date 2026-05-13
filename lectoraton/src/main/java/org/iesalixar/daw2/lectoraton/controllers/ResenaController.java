@@ -24,7 +24,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -238,15 +240,27 @@ public class ResenaController {
     @Operation(summary = "Eliminar una reseña", description = "Permite eliminar una reseña específica en la base de datos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Reseña eliminada exitosamente"),
+            @ApiResponse(responseCode = "403", description = "Sin permiso (no eres el autor ni administrador)"),
             @ApiResponse(responseCode = "404", description = "Reseña no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteResena(@PathVariable Long id) {
+    public ResponseEntity<?> deleteResena(@PathVariable Long id,
+                                          @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long usuarioId = usuarioService.getIdByUsername(userDetails.getUsername());
+        boolean esAdmin = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> "Admin".equalsIgnoreCase(a) || "ROLE_ADMIN".equalsIgnoreCase(a));
         logger.info("Eliminando reseña con ID {}", id);
         try {
-            resenaService.delete(id);
+            resenaService.deleteConPermiso(id, usuarioId, esAdmin);
             return ResponseEntity.ok("Reseña eliminada con éxito.");
+        } catch (AccessDeniedException e) {
+            logger.warn("Prohibido eliminar la reseña {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.warn("Error al eliminar la reseña con ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -267,6 +281,9 @@ public class ResenaController {
             resenaService.deletePropia(id, usuarioId);
             return ResponseEntity.ok("Reseña eliminada con éxito.");
         } catch (IllegalArgumentException e) {
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("no encontrada")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

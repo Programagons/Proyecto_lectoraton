@@ -83,4 +83,13 @@ public class ComentarioService {
         if (!comentarioRepository.existsById(id)) throw new IllegalArgumentException("Comentario no encontrado.");
         comentarioRepository.deleteById(id);
     }
+
+    public void deleteConPermiso(Long id, Long usuarioId, boolean esAdmin) {
+        Comentario comentario = comentarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Comentario no encontrado."));
+        if (!esAdmin && !comentario.getUsuario().getId().equals(usuarioId)) {
+            throw new IllegalStateException("Solo un admin o el creador puede eliminar este comentario.");
+        }
+        comentarioRepository.delete(comentario);
+    }
 }

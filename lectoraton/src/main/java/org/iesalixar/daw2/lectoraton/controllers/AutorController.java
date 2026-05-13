@@ -116,8 +116,8 @@ public class AutorController {
     @GetMapping("/new")
     public String showNewForm(Model model) {
         logger.info("Mostrando formulario para nuevo autor.");
-        model.addAttribute("autor", new Autor()); // Crear un nuevo objeto Autor
-        return "autor-form"; // Nombre de la plantilla Thymeleaf para el formulario
+        model.addAttribute("autor", new Autor());
+        return "autor-form";
     }
 
     /**
@@ -134,8 +134,8 @@ public class AutorController {
         if (!autorOpt.isPresent()) {
             logger.warn("No se encontró el autor con ID {}", id);
         }
-        model.addAttribute("autor", autorOpt.get());
-        return "autor-form"; // Nombre de la plantilla Thymeleaf para el formulario
+        model.addAttribute("autor", autorOpt.orElse(new Autor()));
+        return "autor-form";
     }
 
     /**
@@ -156,7 +156,7 @@ public class AutorController {
     public ResponseEntity<?> createAutor(@Valid @ModelAttribute AutorCreateDTO autorCreateDTO){
         logger.info("Insertando nuevo autor con nombre {}", autorCreateDTO.getNombreCompleto());
         try {
-            AutorDTO createdAutor = autorService.createAutor(autorCreateDTO, Locale.FRENCH);
+            AutorDTO createdAutor = autorService.createAutor(autorCreateDTO, Locale.getDefault());
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAutor);
         } catch (IllegalArgumentException e) {
             logger.warn("Error al crear el autor: {}", e.getMessage());

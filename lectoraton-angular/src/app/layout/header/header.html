@@ -13,6 +13,14 @@
     <a routerLink="/explorar" routerLinkActive="active">{{ 'header.explore' | translate }}</a>
     <a routerLink="/recomendador" routerLinkActive="active">{{ 'header.recommender' | translate }}</a>
     <a routerLink="/comunidad" routerLinkActive="active">{{ 'header.community' | translate }}</a>
+    <span class="nav-link-disabled" [attr.aria-label]="'header.merchandising' | translate">
+      {{ 'header.merchandising' | translate }}
+      <small>{{ 'header.comingSoon' | translate }}</small>
+    </span>
+    <span class="nav-link-disabled" [attr.aria-label]="'header.events' | translate">
+      {{ 'header.events' | translate }}
+      <small>{{ 'header.comingSoon' | translate }}</small>
+    </span>
     <!-- Si el usuario puede publicar libros, muestra el enlace a la página de agregar libro. -->
     @if (auth.canPublishBooks()) {
       <a routerLink="/agregar-libro" routerLinkActive="active">{{ 'header.addBook' | translate }}</a>

@@ -16,6 +16,7 @@ import org.iesalixar.daw2.lectoraton.repositories.UsuarioLibroRepository;
 import org.iesalixar.daw2.lectoraton.repositories.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -138,6 +139,15 @@ public class ResenaService {
     public void delete(Long id) {
         if (!resenaRepository.existsById(id)) throw new IllegalArgumentException("Reseña no encontrada.");
         resenaRepository.deleteById(id);
+    }
+
+    public void deleteConPermiso(Long id, Long usuarioId, boolean esAdmin) {
+        Resena resena = resenaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reseña no encontrada."));
+        if (!esAdmin && !resena.getUsuario().getId().equals(usuarioId)) {
+            throw new AccessDeniedException("Solo un administrador o el autor de la reseña puede eliminarla.");
+        }
+        resenaRepository.delete(resena);
     }
 
     public void deletePropia(Long id, Long usuarioId) {

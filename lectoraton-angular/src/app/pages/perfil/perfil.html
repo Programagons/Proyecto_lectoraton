@@ -9,7 +9,7 @@
     <article class="perfil-card">
       <div class="avatar">
         @if (p.icono) {
-          <img [src]="p.icono" [alt]="'profile.avatarAlt' | translate" />
+          <img [src]="iconoUrl(p.icono)" [alt]="'profile.avatarAlt' | translate" />
         } @else {
           <span>{{ p.username.charAt(0).toUpperCase() }}</span>
         }

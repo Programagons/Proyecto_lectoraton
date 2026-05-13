@@ -59,10 +59,45 @@
         </div>
         <!-- Se muestra el formulario de progreso de lectura -->
         <div class="progreso-form">
+          <label class="progreso-label">
+            {{ 'bookDetail.updateMode' | translate }}
+            <select
+              name="progresoModo"
+              [(ngModel)]="progresoModo"
+              (ngModelChange)="setProgresoModo($event, det)"
+              class="select-estado"
+            >
+              <option value="paginas">{{ 'bookDetail.updateByPages' | translate }}</option>
+              <option value="porcentaje">{{ 'bookDetail.updateByPercent' | translate }}</option>
+            </select>
+          </label>
           <!-- Se muestra el campo de página actual -->
           <label class="progreso-label">
             {{ 'bookDetail.currentPage' | translate }}
-            <input type="number" min="0" [attr.max]="det.paginas ?? null" name="progresoPagina" [(ngModel)]="progresoPagina" class="input-pagina" />
+            <input
+              type="number"
+              min="0"
+              [attr.max]="det.paginas ?? null"
+              name="progresoPagina"
+              [(ngModel)]="progresoPagina"
+              (ngModelChange)="onProgresoPaginaChange(det)"
+              class="input-pagina"
+              [disabled]="progresoModo === 'porcentaje'"
+            />
+          </label>
+          <label class="progreso-label">
+            {{ 'bookDetail.currentPercent' | translate }}
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              name="progresoPorcentaje"
+              [(ngModel)]="progresoPorcentaje"
+              (ngModelChange)="onProgresoPorcentajeChange(det)"
+              class="input-pagina"
+              [disabled]="progresoModo === 'paginas'"
+            />
           </label>
           <label class="progreso-label">
             {{ 'bookDetail.status' | translate }}
@@ -348,6 +383,20 @@
                   <span class="icono">💬</span>
                   <span>{{ r.numComentarios }}</span>
                 </button>
+                @if (authService.isAdmin()) {
+                  <button
+                    type="button"
+                    class="accion-btn danger-btn"
+                    [disabled]="borrandoResenaAdminId() === r.id"
+                    (click)="borrarResenaComoAdmin(r.id)"
+                  >
+                    {{
+                      borrandoResenaAdminId() === r.id
+                        ? ('libraries.deleting' | translate)
+                        : ('bookDetail.deleteReviewAsAdmin' | translate)
+                    }}
+                  </button>
+                }
               </div>
 
               @if (comentariosEstanAbiertos(r.id)) {

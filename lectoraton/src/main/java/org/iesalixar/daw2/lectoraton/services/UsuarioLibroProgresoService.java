@@ -45,32 +45,47 @@ public class UsuarioLibroProgresoService {
      */
     @Transactional 
     public ProgresoLecturaDTO actualizar(Long libroId, Long usuarioId, ProgresoLecturaUpdateDTO body) {
-        Libro libro = libroRepository.findById(libroId) // Se obtiene el libro.
+        Libro libro = libroRepository.findById(libroId)
                 .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado."));
-        if (!usuarioRepository.existsById(usuarioId)) { // Se verifica si el usuario existe.
+        if (!usuarioRepository.existsById(usuarioId)) {
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
 
-        int pagina = body.getPaginaActual(); // Se obtiene la página actual.
         Integer numPaginas = libro.getNumPaginas();
-        if (numPaginas != null && numPaginas > 0 && pagina > numPaginas) { // Se verifica si la página actual es válida.
+        int pagina = resolverPagina(body, numPaginas);
+        if (numPaginas != null && numPaginas > 0 && pagina > numPaginas) {
             throw new IllegalArgumentException("La página actual no puede superar el total de páginas del libro (" + numPaginas + ").");
         }
 
-        EstadoLectura estado = resolverEstado(pagina, numPaginas, body.getEstado()); // Se resuelve el estado de lectura.
+        EstadoLectura estado = resolverEstado(pagina, numPaginas, body.getEstado());
 
-        UsuarioLibro ul = usuarioLibroRepository.findByUsuarioIdAndLibroId(usuarioId, libroId) // Se obtiene el usuario libro.
+        UsuarioLibro ul = usuarioLibroRepository.findByUsuarioIdAndLibroId(usuarioId, libroId)
                 .orElseGet(() -> crearVacio(usuarioId, libro));
 
-        ul.setPaginaActual(pagina); // Se actualiza la página actual.
-        ul.setEstado(estado); // Se actualiza el estado de lectura.
-        ul.setFechaActualizacion(LocalDateTime.now()); // Se actualiza la fecha de actualización.
+        ul.setPaginaActual(pagina);
+        ul.setEstado(estado);
+        ul.setFechaActualizacion(LocalDateTime.now());
 
-        usuarioLibroRepository.save(ul); // Se guarda el usuario libro.
+        usuarioLibroRepository.save(ul);
         ProgresoLecturaDTO dto = toDto(ul, libro);
-        Usuario actor = usuarioRepository.getReferenceById(usuarioId); // Se obtiene el usuario.    
-        actividadUsuarioService.registrarProgresoLectura(actor, libro, dto); // Se registra el progreso de lectura.
+        Usuario actor = usuarioRepository.getReferenceById(usuarioId);
+        actividadUsuarioService.registrarProgresoLectura(actor, libro, dto);
         return dto;
+    }
+
+    private int resolverPagina(ProgresoLecturaUpdateDTO body, Integer numPaginas) {
+        if (body.getPaginaActual() != null) {
+            return body.getPaginaActual();
+        }
+        Double porcentaje = body.getPorcentajeActual();
+        if (porcentaje == null) {
+            throw new IllegalArgumentException("Debes indicar paginaActual o porcentajeActual.");
+        }
+        if (numPaginas == null || numPaginas <= 0) {
+            throw new IllegalArgumentException("Este libro no tiene total de páginas para calcular porcentaje.");
+        }
+        double ratio = Math.min(100.0, Math.max(0.0, porcentaje)) / 100.0;
+        return (int) Math.round(ratio * numPaginas);
     }
 
     /**

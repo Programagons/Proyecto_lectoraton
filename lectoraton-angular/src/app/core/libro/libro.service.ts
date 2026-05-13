@@ -57,7 +57,8 @@ export interface ProgresoLecturaDTO {
 
 /* Interfaz para el progreso de lectura */
 export interface ProgresoLecturaUpdateRequest {
-  paginaActual: number;
+  paginaActual?: number | null;
+  porcentajeActual?: number | null;
   estado?: string | null;
 }
 
@@ -258,6 +259,11 @@ export class LibroService {
   /* Método para eliminar la resena propia de un libro */
   deleteMiResena(resenaId: number): Observable<string> {
     return this.http.delete(`${environment.apiUrl}/resenas/${resenaId}/mia`, { responseType: 'text' });
+  }
+
+  /** Elimina una reseña: autor o administrador (backend valida permisos). */
+  deleteResena(resenaId: number): Observable<string> {
+    return this.http.delete(`${environment.apiUrl}/resenas/${resenaId}`, { responseType: 'text' });
   }
 
   /* Método para actualizar la resena propia de un libro */

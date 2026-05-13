@@ -36,6 +36,7 @@ export class LibroDetallePage implements OnInit, OnDestroy {
   protected readonly spoilersComentariosVisibles = signal<Record<number, Record<number, boolean>>>({});
   protected readonly miResena = signal<ResenaDTO | null>(null);
   protected readonly borrandoMiResena = signal(false);
+  protected readonly borrandoResenaAdminId = signal<number | null>(null);
   protected readonly creandoResena = signal(false);
   protected readonly crearResenaError = signal<string | null>(null);
   protected readonly crearResenaOk = signal<string | null>(null);
@@ -43,6 +44,8 @@ export class LibroDetallePage implements OnInit, OnDestroy {
   protected readonly progresoError = signal<string | null>(null);
   protected readonly progresoOk = signal<string | null>(null);
   protected progresoPagina = 0;
+  protected progresoPorcentaje = 0;
+  protected progresoModo: 'paginas' | 'porcentaje' = 'paginas';
   // Cadena vacía = enviar sin estado (el servidor deduce según página).
   //  Esto es para que el servidor pueda deducir el estado de lectura del usuario sin tener que enviarlo en cada petición.
   protected progresoEstado = '';
@@ -63,7 +66,7 @@ export class LibroDetallePage implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly libroService: LibroService,
     private readonly bibliotecaService: BibliotecaService,
-    private readonly authService: AuthService,
+    protected readonly authService: AuthService,
     private readonly translate: TranslateService,
   ) {}
 
@@ -138,10 +141,17 @@ export class LibroDetallePage implements OnInit, OnDestroy {
       return;
     }
 
+    const paginaNormalizada = Math.floor(this.progresoPagina);
+    const porcentajeNormalizado = Math.min(100, Math.max(0, this.progresoPorcentaje));
+
     // Se crea el payload para la actualización del progreso de lectura
-    const payload: { paginaActual: number; estado?: string } = {
-      paginaActual: Math.floor(this.progresoPagina),
-    };
+    const payload: { paginaActual?: number; porcentajeActual?: number; estado?: string } = {};
+    if (det.paginas != null && det.paginas > 0 && this.progresoModo === 'porcentaje') {
+      payload.paginaActual = Math.round((porcentajeNormalizado * det.paginas) / 100);
+      payload.porcentajeActual = porcentajeNormalizado;
+    } else {
+      payload.paginaActual = paginaNormalizada;
+    }
     // Si el estado de lectura no es vacío, se agrega al payload
     if (this.progresoEstado !== '') {
       payload.estado = this.progresoEstado;
@@ -157,6 +167,7 @@ export class LibroDetallePage implements OnInit, OnDestroy {
         // Se aplica el progreso de lectura en el detalle del libro
         this.aplicarMiProgresoEnDetalle(actualizado);
         this.progresoPagina = actualizado.paginaActual;
+        this.progresoPorcentaje = actualizado.porcentaje;
         this.progresoEstado = '';
       },
       error: (err: HttpErrorResponse) => {
@@ -427,7 +438,42 @@ export class LibroDetallePage implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         this.borrandoMiResena.set(false);
         const body = err.error as string | { message?: string } | undefined;
-        this.crearResenaError.set(typeof body === 'string' ? body : body?.message || this.translate.instant('bookDetail.errorDeleteReview'));
+        const msg =
+          err.status === 403
+            ? this.translate.instant('bookDetail.errorForbiddenDeleteReview')
+            : typeof body === 'string'
+              ? body
+              : body?.message || this.translate.instant('bookDetail.errorDeleteReview');
+        this.crearResenaError.set(msg);
+      },
+    });
+  }
+
+  /** Moderación: solo administradores (el backend valida de nuevo). */
+  protected borrarResenaComoAdmin(resenaId: number): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+    this.crearResenaError.set(null);
+    this.crearResenaOk.set(null);
+    this.borrandoResenaAdminId.set(resenaId);
+    this.libroService.deleteResena(resenaId).subscribe({
+      next: () => {
+        this.borrandoResenaAdminId.set(null);
+        this.crearResenaOk.set(this.translate.instant('bookDetail.reviewDeleted'));
+        this.cargarDetalle();
+        this.cargarResenas();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.borrandoResenaAdminId.set(null);
+        const body = err.error as string | { message?: string } | undefined;
+        const msg =
+          err.status === 403
+            ? this.translate.instant('bookDetail.errorForbiddenDeleteReview')
+            : typeof body === 'string'
+              ? body
+              : body?.message || this.translate.instant('bookDetail.errorDeleteReview');
+        this.crearResenaError.set(msg);
       },
     });
   }
@@ -595,12 +641,45 @@ export class LibroDetallePage implements OnInit, OnDestroy {
     const p = det.miProgreso;
     if (!p) {
       this.progresoPagina = 0;
+      this.progresoPorcentaje = 0;
       this.progresoEstado = '';
       return;
     }
     // Se actualiza el progreso de lectura del formulario
     this.progresoPagina = p.paginaActual;
+    this.progresoPorcentaje = p.porcentaje;
+    this.progresoModo = 'paginas';
     this.progresoEstado = '';
+  }
+
+  protected onProgresoPaginaChange(det: LibroDetalleDTO): void {
+    const paginasTotales = det.paginas;
+    if (!paginasTotales || paginasTotales <= 0) {
+      this.progresoPorcentaje = 0;
+      return;
+    }
+    const pag = Math.min(paginasTotales, Math.max(0, this.progresoPagina || 0));
+    this.progresoPagina = pag;
+    this.progresoPorcentaje = Number(((pag * 100) / paginasTotales).toFixed(1));
+  }
+
+  protected onProgresoPorcentajeChange(det: LibroDetalleDTO): void {
+    const paginasTotales = det.paginas;
+    const pct = Math.min(100, Math.max(0, this.progresoPorcentaje || 0));
+    this.progresoPorcentaje = pct;
+    if (!paginasTotales || paginasTotales <= 0) {
+      return;
+    }
+    this.progresoPagina = Math.round((pct * paginasTotales) / 100);
+  }
+
+  protected setProgresoModo(modo: 'paginas' | 'porcentaje', det: LibroDetalleDTO): void {
+    this.progresoModo = modo;
+    if (modo === 'porcentaje') {
+      this.onProgresoPaginaChange(det);
+      return;
+    }
+    this.onProgresoPorcentajeChange(det);
   }
 
   // Método para aplicar el progreso de lectura en el detalle del libro
